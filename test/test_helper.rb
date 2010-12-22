@@ -1,12 +1,5 @@
-require 'rubygems'
-require 'test/unit'
-require 'shoulda'
-gem 'jnunemaker-matchy', '>= 0.4.0'
-require 'matchy'
+require 'bundler'
+Bundler.require :test
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
+$:.unshift File.expand_path('../../lib', __FILE__)
 require 'crack'
-
-class Test::Unit::TestCase
-end

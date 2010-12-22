@@ -1,23 +1,20 @@
-require 'rubygems'
-require 'rake'
-require File.expand_path('../lib/crack', __FILE__)
+require 'bundler'
+Bundler.require :development
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "crack"
-    gem.summary = %Q{Really simple JSON and XML parsing, ripped from Merb and Rails.}
-    gem.email = "nunemaker@gmail.com"
-    gem.homepage = "http://github.com/jnunemaker/crack"
-    gem.authors = ["John Nunemaker", "Wynn Netherland"]
-    gem.rubyforge_project = 'crack'
-    gem.version = Crack::VERSION
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+$:.unshift File.expand_path('../lib', __FILE__)
+require 'crack'
+
+Jeweler::Tasks.new do |gem|
+  gem.name = "crack"
+  gem.summary = %Q{Really simple JSON and XML parsing, ripped from Merb and Rails.}
+  gem.email = "nunemaker@gmail.com"
+  gem.homepage = "http://github.com/jnunemaker/crack"
+  gem.authors = ["John Nunemaker", "Wynn Netherland"]
+  gem.rubyforge_project = 'crack'
+  gem.version = Crack::VERSION
+  # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
 end
+Jeweler::GemcutterTasks.new
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
@@ -47,6 +44,5 @@ rescue LoadError
     abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
   end
 end
-
 
 task :default => :test

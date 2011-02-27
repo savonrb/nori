@@ -5,8 +5,7 @@ require "nori/parser"
 module Nori
 
   def self.parse(xml)
-    adapter = Parser.find Parser.use
-    adapter.new.parse xml
+    Parser.parse xml
   end
 
 end

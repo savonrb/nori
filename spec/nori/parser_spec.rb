@@ -27,13 +27,9 @@ describe Nori::Parser do
     end
   end
 
-  describe ".find" do
-    it "should return the parser for a given Symbol" do
-      parser.find(:rexml).should == Nori::Parser::REXML
-    end
-
-    it "should raise an ArgumentError in case of an invalid parser" do
-      lambda { parser.find :unknown }.should raise_error(ArgumentError)
+  describe ".parse" do
+    it "should load the parser to use and parse the given xml" do
+      parser.parse("<some>xml</some>").should == { "some" => "xml" }
     end
   end
 

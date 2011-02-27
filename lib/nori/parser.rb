@@ -19,7 +19,7 @@ module Nori
 
     # Sets the +parser+ to use. Raises an +ArgumentError+ unless the +parser+ exists.
     def self.use=(parser)
-      validate_parser! parser
+      raise ArgumentError, "Invalid Nori parser: #{parser}" unless parsers[parser]
       @use = parser
     end
 
@@ -30,23 +30,17 @@ module Nori
       }
     end
 
-    # Returns a +parser+. Raises an +ArgumentError+ unless the +parser+ exists.
-    def self.find(parser)
-      validate_parser! parser
-      load_parser parser
+    # Returns the parsed +xml+ using the parser to use.
+    def self.parse(xml)
+      load_parser.new.parse xml
     end
 
   private
 
-    # Raises an +ArgumentError+ unless the +parser+ exists.
-    def self.validate_parser!(parser)
-      raise ArgumentError, "Invalid Nori parser: #{parser}" unless parsers[parser]
-    end
-
-    # Tries to load and return the given +parser+.
-    def self.load_parser(parser)
-      require parsers[parser][:require]
-      parsers[parser][:class]
+    # Requires and returns the +parser+ to use.
+    def self.load_parser
+      require parsers[use][:require]
+      parsers[use][:class]
     end
 
   end

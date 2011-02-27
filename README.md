@@ -1,4 +1,4 @@
-Nori
+Nori ![http://travis-ci.org/rubiii/nori](http://travis-ci.org/rubiii/nori.png!)
 ====
 
-Coming soon.
+Details coming soon.

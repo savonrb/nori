@@ -1,3 +1,4 @@
+require "rexml/parsers/baseparser"
 require "nori/xml_utility_node"
 
 module Nori
@@ -5,11 +6,10 @@ module Nori
 
     # = Nori::Parser::REXML
     #
-    # Parser using REXML, Ruby's standard XML library.
-    # http://www.ruby-doc.org/stdlib/libdoc/rexml/rdoc/index.html
-    class REXML
+    # REXML pull parser.
+    module REXML
 
-      def parse(xml)
+      def self.parse(xml)
         stack = []
         parser = ::REXML::Parsers::BaseParser.new(xml)
 
@@ -21,7 +21,7 @@ module Nori
           when :end_doctype, :start_doctype
             # do nothing
           when :start_element
-            stack.push XMLUtilityNode.new(event[1], event[2])
+            stack.push Nori::XMLUtilityNode.new(event[1], event[2])
           when :end_element
             if stack.size > 1
               temp = stack.pop

@@ -13,7 +13,8 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "nori"
 
-  s.add_development_dependency "rspec", "~> 2.4.0"
+  s.add_development_dependency "nokogiri", "~> 1.4.4"
+  s.add_development_dependency "rspec",    "~> 2.4.0"
   s.add_development_dependency "autotest"
 
   s.files         = `git ls-files`.split("\n")

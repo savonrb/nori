@@ -1,5 +1,3 @@
-require "nori/parser/rexml"
-
 module Nori
 
   # = Nori::Parser
@@ -12,6 +10,9 @@ module Nori
     # The default parser.
     DEFAULT = :rexml
 
+    # List of available parsers.
+    PARSERS = { :rexml => "REXML", :nokogiri => "Nokogiri" }
+
     # Returns the parser to use. Defaults to <tt>Nori::Parser::REXML</tt>.
     def self.use
       @use ||= DEFAULT
@@ -19,28 +20,30 @@ module Nori
 
     # Sets the +parser+ to use. Raises an +ArgumentError+ unless the +parser+ exists.
     def self.use=(parser)
-      raise ArgumentError, "Invalid Nori parser: #{parser}" unless parsers[parser]
+      validate_parser! parser
       @use = parser
     end
 
-    # Returns a memoized +Hash+ of parsers.
-    def self.parsers
-      @parsers ||= {
-        :rexml => { :class => REXML, :require => "rexml/document" }
-      }
-    end
-
-    # Returns the parsed +xml+ using the parser to use.
-    def self.parse(xml)
-      load_parser.new.parse xml
+    # Returns the parsed +xml+ using the parser to use. Raises an +ArgumentError+
+    # unless the optional or default +parser+ exists.
+    def self.parse(xml, parser = nil)
+      load_parser(parser).parse xml
     end
 
   private
 
+    # Raises an +ArgumentError+ unless the +parser+ exists.
+    def self.validate_parser!(parser)
+      raise ArgumentError, "Invalid Nori parser: #{parser}" unless PARSERS[parser]
+    end
+
     # Requires and returns the +parser+ to use.
-    def self.load_parser
-      require parsers[use][:require]
-      parsers[use][:class]
+    def self.load_parser(parser)
+      parser ||= use
+      validate_parser! parser
+
+      require "nori/parser/#{parser}"
+      const_get PARSERS[parser]
     end
 
   end

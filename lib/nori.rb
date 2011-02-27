@@ -4,8 +4,10 @@ require "nori/parser"
 
 module Nori
 
-  def self.parse(xml)
-    Parser.parse xml
+  # Translates the given +xml+ to a Hash. Accepts an optional +parser+ to use.
+  def self.parse(xml, parser = nil)
+    return {} if xml.blank?
+    Parser.parse xml, parser
   end
 
 end

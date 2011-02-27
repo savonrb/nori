@@ -1,3 +1,4 @@
+require "rexml/text"
 require "date"
 require "time"
 require "yaml"
@@ -176,7 +177,7 @@ module Nori
 
   private
 
-    # TODO: remove fucking REXML
+    # TODO: replace REXML
     def unnormalize_xml_entities value
       REXML::Text.unnormalize(value)
     end

@@ -1,20 +1,18 @@
-require 'rexml/parsers/streamparser'
-require 'rexml/parsers/baseparser'
-require 'rexml/light/node'
-require 'rexml/text'
-require 'date'
-require 'time'
-require 'yaml'
-require 'bigdecimal'
+require "date"
+require "time"
+require "yaml"
+require "bigdecimal"
 
-module Crack
+module Nori
+
   # This is a slighly modified version of the XMLUtilityNode from
   # http://merb.devjavu.com/projects/merb/ticket/95 (has.sox@gmail.com)
+  #
+  # John Nunemaker:
   # It's mainly just adding vowels, as I ht cd wth n vwls :)
   # This represents the hard part of the work, all I did was change the
   # underlying parser.
-  class XMLUtilityNode #:nodoc:
-    attr_accessor :name, :attributes, :children, :type
+  class XMLUtilityNode
 
     def self.typecasts
       @@typecasts
@@ -33,27 +31,26 @@ module Crack
     end
 
     self.typecasts = {}
-    self.typecasts["integer"]       = lambda{|v| v.nil? ? nil : v.to_i}
-    self.typecasts["boolean"]       = lambda{|v| v.nil? ? nil : (v.strip != "false")}
-    self.typecasts["datetime"]      = lambda{|v| v.nil? ? nil : Time.parse(v).utc}
-    self.typecasts["date"]          = lambda{|v| v.nil? ? nil : Date.parse(v)}
-    self.typecasts["dateTime"]      = lambda{|v| v.nil? ? nil : Time.parse(v).utc}
-    self.typecasts["decimal"]       = lambda{|v| v.nil? ? nil : BigDecimal(v.to_s)}
-    self.typecasts["double"]        = lambda{|v| v.nil? ? nil : v.to_f}
-    self.typecasts["float"]         = lambda{|v| v.nil? ? nil : v.to_f}
-    self.typecasts["symbol"]        = lambda{|v| v.nil? ? nil : v.to_sym}
-    self.typecasts["string"]        = lambda{|v| v.to_s}
-    self.typecasts["yaml"]          = lambda{|v| v.nil? ? nil : YAML.load(v)}
-    self.typecasts["base64Binary"]  = lambda{|v| v.unpack('m').first }
+    self.typecasts["integer"]       = lambda { |v| v.nil? ? nil : v.to_i }
+    self.typecasts["boolean"]       = lambda { |v| v.nil? ? nil : (v.strip != "false") }
+    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
+    self.typecasts["date"]          = lambda { |v| v.nil? ? nil : Date.parse(v) }
+    self.typecasts["dateTime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
+    self.typecasts["decimal"]       = lambda { |v| v.nil? ? nil : BigDecimal(v.to_s) }
+    self.typecasts["double"]        = lambda { |v| v.nil? ? nil : v.to_f }
+    self.typecasts["float"]         = lambda { |v| v.nil? ? nil : v.to_f }
+    self.typecasts["symbol"]        = lambda { |v| v.nil? ? nil : v.to_sym }
+    self.typecasts["string"]        = lambda { |v| v.to_s }
+    self.typecasts["yaml"]          = lambda { |v| v.nil? ? nil : YAML.load(v) }
+    self.typecasts["base64Binary"]  = lambda { |v| v.unpack('m').first }
 
     self.available_typecasts = self.typecasts.keys
 
     def initialize(name, normalized_attributes = {})
-
       # unnormalize attribute values
-      attributes = Hash[* normalized_attributes.map { |key, value|
+      attributes = Hash[* normalized_attributes.map do |key, value|
         [ key, unnormalize_xml_entities(value) ]
-      }.flatten]
+      end.flatten]
 
       @name         = name.tr("-", "_")
       # leave the type alone if we don't know what it is
@@ -64,6 +61,8 @@ module Crack
       @children     = []
       @text         = false
     end
+
+    attr_accessor :name, :attributes, :children, :type
 
     def add_node(node)
       @text = true if node.is_a? String
@@ -173,56 +172,14 @@ module Crack
       "<#{name}#{attributes.to_xml_attributes}>#{@nil_element ? '' : inner_html}</#{name}>"
     end
 
-    # @alias #to_html #to_s
-    def to_s
-      to_html
-    end
+    alias to_s to_html
 
-    private
+  private
 
+    # TODO: remove fucking REXML
     def unnormalize_xml_entities value
       REXML::Text.unnormalize(value)
     end
   end
 
-  class REXMLParser
-    def self.parse(xml)
-      stack = []
-      parser = REXML::Parsers::BaseParser.new(xml)
-
-      while true
-        event = parser.pull
-        case event[0]
-        when :end_document
-          break
-        when :end_doctype, :start_doctype
-          # do nothing
-        when :start_element
-          stack.push XMLUtilityNode.new(event[1], event[2])
-        when :end_element
-          if stack.size > 1
-            temp = stack.pop
-            stack.last.add_node(temp)
-          end
-        when :text, :cdata
-          stack.last.add_node(event[1]) unless event[1].strip.length == 0 || stack.empty?
-        end
-      end
-      stack.length > 0 ? stack.pop.to_hash : {}
-    end
-  end
-
-  class XML
-    def self.parser
-      @@parser ||= REXMLParser
-    end
-
-    def self.parser=(parser)
-      @@parser = parser
-    end
-
-    def self.parse(xml)
-      parser.parse(xml)
-    end
-  end
 end

@@ -1,13 +1,15 @@
-require 'test_helper'
+require "spec_helper"
 
-class CrackTest < Test::Unit::TestCase
-  context "blank?" do
-    should "be true for blank objects" do
+describe Object do
+
+  describe "#blank?" do
+    it "should return true for blank objects" do
       [nil, false, [], {}].each { |object| object.should be_blank }
     end
 
-    should "be false for non-blank objects" do
+    it "should return false for non-blank objects" do
       [true, [nil], 1, "string", { :key => "value" }].each { |object| object.should_not be_blank }
     end
   end
+
 end

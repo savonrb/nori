@@ -1,29 +1,9 @@
-require 'uri'
+require "uri"
 
-module Crack
-  module CoreExtensions
-    module Object #:nodoc:
-      # @return <TrueClass, FalseClass>
-      #
-      # @example [].blank?         #=>  true
-      # @example [1].blank?        #=>  false
-      # @example [nil].blank?      #=>  false
-      #
-      # Returns true if the object is empty or !self (if applicable)
-      def blank?
-        respond_to?(:empty?) ? empty? : !self
-      end unless method_defined?(:blank?)
-    end
+module Nori
+  module CoreExt
+    module Hash
 
-    module String #:nodoc:
-      def snake_case
-        return self.downcase if self =~ /^[A-Z]+$/
-        self.gsub(/([A-Z]+)(?=[A-Z][a-z]?)|\B[A-Z]/, '_\&') =~ /_*(.*)/
-        $+.downcase
-      end unless method_defined?(:snake_case)
-    end
-
-    module Hash #:nodoc:
       # @return <String> This hash as a query string
       #
       # @example
@@ -36,7 +16,7 @@ module Crack
       #   }.to_params
       #     #=> "name=Bob&address[city]=Ruby Central&address[phones][]=111-111-1111&address[phones][]=222-222-2222&address[street]=111 Ruby Ave."
       def to_params
-        params = self.map { |k,v| normalize_param(k,v) }.join
+        params = self.map { |k, v| normalize_param(k,v) }.join
         params.chop! # trailing &
         params
       end
@@ -71,21 +51,20 @@ module Crack
 
         param
       end
-  
+
       # @return <String> The hash as attributes for an XML tag.
       #
       # @example
       #   { :one => 1, "two"=>"TWO" }.to_xml_attributes
       #     #=> 'one="1" two="TWO"'
       def to_xml_attributes
-        map do |k,v|
+        map do |k, v|
           %{#{k.to_s.snake_case.sub(/^(.{1,1})/) { |m| m.downcase }}="#{v}"}
         end.join(' ')
       end
+
     end
   end
 end
 
-Object.send :include, Crack::CoreExtensions::Object
-String.send :include, Crack::CoreExtensions::String
-Hash.send :include, Crack::CoreExtensions::Hash
+Hash.send :include, Nori::CoreExt::Hash

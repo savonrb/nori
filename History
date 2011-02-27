@@ -1,9 +1,14 @@
+== 0.2.0 UPCOMING
+* Rewrite
+
 == 0.1.7 2010-02-19
 * 1 minor patch
   * Added patch from @purp for ISO 8601 date/time format
+
 == 0.1.6 2010-01-31
 * 1 minor patch
   * Added Crack::VERSION constant - http://weblog.rubyonrails.org/2009/9/1/gem-packaging-best-practices
+
 == 0.1.5 2010-01-27
 * 1 minor patch
   * Strings that begin with dates shouldn't be parsed as such (sandro)
@@ -16,7 +21,7 @@
 * 2 minor patches
   * Correct unnormalization of attribute values (der-flo)
   * Fix error in parsing YAML in the case where a hash value ends with backslashes, and there are subsequent values in the hash (deadprogrammer)
-  
+
 == 0.1.1 2009-03-31
 * 1 minor patch
   * Parsing empty or blank xml now returns empty hash instead of raising error.

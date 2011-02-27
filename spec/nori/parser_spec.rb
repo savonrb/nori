@@ -11,7 +11,7 @@ describe Nori::Parser do
 
   describe ".use" do
     it "should default to REXML" do
-      parser.use.should == :rexml
+      parser.use.should == Nori::Parser::DEFAULT
     end
 
     it "should accept a parser to use" do
@@ -20,6 +20,7 @@ describe Nori::Parser do
 
       # reset to default
       parser.use = Nori::Parser::DEFAULT
+      parser.use.should == Nori::Parser::DEFAULT
     end
 
     it "should raise an ArgumentError in case of an invalid parser" do

@@ -5,7 +5,7 @@ describe Nori do
   Nori::Parser::PARSERS.each do |parser, class_name|
     context "using the :#{parser} parser" do
 
-      before(:all) { Nori::Parser.use = parser }
+      let(:parser) { parser }
 
       it "should transform a simple tag with content" do
         xml = "<tag>This is the contents</tag>"
@@ -500,7 +500,7 @@ describe Nori do
   end
 
   def parse(xml)
-    Nori.parse xml
+    Nori.parse xml, parser
   end
 
 end

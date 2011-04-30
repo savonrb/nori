@@ -104,6 +104,16 @@ describe Nori do
         it "default attributes to empty hash if not present" do
           @data['opt']['user'][1].attributes.should == {}
         end
+
+        it "add 'attributes' accessor methods to parsed instances of String" do
+          @data['opt']['user'][0].should respond_to(:attributes)
+          @data['opt']['user'][0].should respond_to(:attributes=)
+        end
+
+        it "not add 'attributes' accessor methods to all instances of String" do
+          "some-string".should_not respond_to(:attributes)
+          "some-string".should_not respond_to(:attributes=)
+        end
       end
 
       it "should typecast an integer" do

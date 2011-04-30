@@ -10,4 +10,9 @@ module Nori
     Parser.parse xml, parser
   end
 
+  # Sets the +parser+ to use.
+  def self.parser=(parser)
+    Parser.use = parser
+  end
+
 end

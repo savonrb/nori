@@ -1,5 +1,11 @@
-== 0.2.0 UPCOMING
-* Rewrite
+== 0.2.0 (2011-04-30)
+
+* Removed JSON from the original Crack basis
+* Fixed a problem with Object#blank?
+* Added swappable parsers
+* Added a Nokogiri parser with you can switch to via:
+
+      Nori.parser = :nokogiri
 
 == 0.1.7 2010-02-19
 * 1 minor patch

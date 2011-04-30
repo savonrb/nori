@@ -5,6 +5,7 @@ module Nori
   # Manages the parser classes. Currently supports:
   #
   # * REXML
+  # * Nokogiri
   module Parser
 
     # The default parser.

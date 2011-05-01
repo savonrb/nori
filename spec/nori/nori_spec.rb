@@ -25,7 +25,7 @@ describe Nori do
 
       it "should transform a simple tag with attributes" do
         xml = "<tag attr1='1' attr2='2'></tag>"
-        hash = { 'tag' => { 'attr1' => '1', 'attr2' => '2' } }
+        hash = { 'tag' => { '@attr1' => '1', '@attr2' => '2' } }
         parse(xml).should == hash
       end
 
@@ -42,11 +42,11 @@ describe Nori do
         hash = {
           'opt' => {
             'user' => [{
-              'login'    => 'grep',
-              'fullname' => 'Gary R Epstein'
+              '@login'    => 'grep',
+              '@fullname' => 'Gary R Epstein'
             },{
-              'login'    => 'stty',
-              'fullname' => 'Simon T Tyson'
+              '@login'    => 'stty',
+              '@fullname' => 'Simon T Tyson'
             }]
           }
         }
@@ -66,13 +66,24 @@ describe Nori do
         hash = {
           'opt' => {
             'user' => {
-              'login' => 'grep',
-              'fullname' => 'Gary R Epstein'
+              '@login' => 'grep',
+              '@fullname' => 'Gary R Epstein'
             }
           }
         }
 
         parse(xml).should == hash
+      end
+
+      it "should prefix attributes with an @-sign to avoid problems with overwritten values" do
+        xml =<<-XML
+          <multiRef id="id1">
+            <approved>true</approved>
+            <id>76737</id>
+          </multiRef>
+        XML
+
+        parse(xml)["multiRef"].should == { "approved" => "true", "@id" => "id1", "id" => "76737" }
       end
 
       context "Parsing xml with text and attributes" do
@@ -158,26 +169,26 @@ describe Nori do
       end
 
       it "should unescape XML entities in attributes" do
-        xml_entities.each do |k,v|
-          xml = "<tag attr='Some content #{v}'></tag>"
-          parse(xml)['tag']['attr'].should =~ Regexp.new(k)
+        xml_entities.each do |key, value|
+          xml = "<tag attr='Some content #{value}'></tag>"
+          parse(xml)['tag']['@attr'].should =~ Regexp.new(key)
         end
       end
 
       it "should undasherize keys as tags" do
         xml = "<tag-1>Stuff</tag-1>"
-        parse(xml).keys.should include( 'tag_1' )
+        parse(xml).keys.should include('tag_1')
       end
 
       it "should undasherize keys as attributes" do
         xml = "<tag1 attr-1='1'></tag1>"
-        parse(xml)['tag1'].keys.should include( 'attr_1')
+        parse(xml)['tag1'].keys.should include('@attr_1')
       end
 
       it "should undasherize keys as tags and attributes" do
         xml = "<tag-1 attr-1='1'></tag-1>"
-        parse(xml).keys.should include( 'tag_1' )
-        parse(xml)['tag_1'].keys.should include( 'attr_1')
+        parse(xml).keys.should include('tag_1')
+        parse(xml)['tag_1'].keys.should include('@attr_1')
       end
 
       it "should render nested content correctly" do
@@ -213,7 +224,7 @@ describe Nori do
 
         hash = {
           "user" => {
-            "gender"    => "m",
+            "@gender"   => "m",
             "age"       => 35,
             "name"      => "Home Simpson",
             "dob"       => Date.parse('1988-01-01'),
@@ -357,14 +368,14 @@ describe Nori do
         EOT
 
         expected_topic_hash = {
-          'id' => "175756086",
-          'owner' => "55569174@N00",
-          'secret' => "0279bf37a1",
-          'server' => "76",
-          'title' => "Colored Pencil PhotoBooth Fun",
-          'ispublic' => "1",
-          'isfriend' => "0",
-          'isfamily' => "0",
+          '@id' => "175756086",
+          '@owner' => "55569174@N00",
+          '@secret' => "0279bf37a1",
+          '@server' => "76",
+          '@title' => "Colored Pencil PhotoBooth Fun",
+          '@ispublic' => "1",
+          '@isfriend' => "0",
+          '@isfamily' => "0",
         }
 
         parse(topic_xml)["rsp"]["photos"]["photo"].each do |k, v|
@@ -481,7 +492,7 @@ describe Nori do
 
         expected_product_hash = {
           'weight' => 0.5,
-          'image' => {'type' => 'ProductImage', 'filename' => 'image.gif' },
+          'image' => {'@type' => 'ProductImage', 'filename' => 'image.gif' },
         }
 
         parse(product_xml)["product"].should == expected_product_hash

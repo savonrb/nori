@@ -1,3 +1,19 @@
+== UPCOMING
+
+* Changes XML attributes converted to Hash keys to be prefixed with an @-sign.  
+  This avoids problems with attributes and child nodes having the same name.  
+
+  For example:
+
+      <multiRef id="id1">
+        <approved xsi:type="xsd:boolean">true</approved>
+        <id xsi:type="xsd:long">76737</id>
+      </multiRef>
+
+  is now translated to:
+
+      { "multiRef" => { "@id" => "id1", "id" => "76737", "approved" => "true" } }
+
 == 0.2.0 (2011-04-30)
 
 * Removed JSON from the original Crack basis

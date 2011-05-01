@@ -65,6 +65,13 @@ module Nori
 
     attr_accessor :name, :attributes, :children, :type
 
+    def prefixed_attributes
+      attributes.inject({}) do |memo, (key, value)|
+        memo["@#{key}"] = value
+        memo
+      end
+    end
+
     def add_node(node)
       @text = true if node.is_a? String
       @children << node
@@ -115,7 +122,7 @@ module Nori
               out.merge!( k => v.map{|e| e.to_hash[k]})
             end
           end
-          out.merge! attributes unless attributes.empty?
+          out.merge! prefixed_attributes unless attributes.empty?
           out = out.empty? ? nil : out
         end
 

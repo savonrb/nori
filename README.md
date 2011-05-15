@@ -1,4 +1,4 @@
-Nori ![http://travis-ci.org/rubiii/nori](http://travis-ci.org/rubiii/nori.png)
+Nori [![Build Status](http://travis-ci.org/rubiii/nori.png)](http://travis-ci.org/rubiii/nori)
 ====
 
 Really simple XML parsing ripped from Crack which ripped it from Merb.  

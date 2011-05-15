@@ -9,7 +9,7 @@ task :benchmark do
 end
 
 RSpec::Core::RakeTask.new do |t|
-  t.rspec_opts = %w(-fd -c)
+  t.rspec_opts = %w(-c)
 end
 
 task :default => :spec

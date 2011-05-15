@@ -1,9 +1,7 @@
-== UPCOMING
+== 0.2.1 (2011-05-15)
 
-* Changes XML attributes converted to Hash keys to be prefixed with an @-sign.  
-  This avoids problems with attributes and child nodes having the same name.  
-
-  For example:
+* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.  
+  This avoids problems with attributes and child nodes having the same name.
 
       <multiRef id="id1">
         <approved xsi:type="xsd:boolean">true</approved>

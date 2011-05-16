@@ -1,3 +1,7 @@
+== 0.2.2 (2011-05-16)
+
+* Fix: namespaced xs:nil values should be nil objects.
+
 == 0.2.1 (2011-05-15)
 
 * Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.  

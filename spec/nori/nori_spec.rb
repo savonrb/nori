@@ -246,6 +246,8 @@ describe Nori do
             <viewed-at type="datetime"></viewed-at>
             <content type="yaml"></content>
             <parent-id></parent-id>
+            <nil_true nil="true"/>
+            <namespaced xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
           </topic>
         EOT
 
@@ -256,7 +258,9 @@ describe Nori do
           'written_on' => nil,
           'viewed_at'  => nil,
           'content'    => nil,
-          'parent_id'  => nil
+          'parent_id'  => nil,
+          'nil_true'   => nil,
+          'namespaced' => nil
         }
         parse(topic_xml)["topic"].should == expected_topic_hash
       end

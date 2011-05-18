@@ -3,12 +3,16 @@ require "spec_helper"
 describe Object do
 
   describe "#blank?" do
-    it "should return true for blank objects" do
-      [nil, false, [], {}].each { |object| object.should be_blank }
+    [nil, false, [], {}].each do |object|
+      it "should return true for: #{object.inspect}" do
+        object.blank?.should be_true
+      end
     end
 
-    it "should return false for non-blank objects" do
-      [true, [nil], 1, "string", { :key => "value" }].each { |object| object.should_not be_blank }
+    [true, [nil], 1, "string", { :key => "value" }].each do |object|
+      it "should return false for: #{object.inspect}" do
+        object.blank?.should be_false
+      end
     end
   end
 

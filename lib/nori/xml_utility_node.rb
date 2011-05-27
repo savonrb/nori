@@ -4,6 +4,9 @@ require "time"
 require "yaml"
 require "bigdecimal"
 
+require "nori/string_with_attributes"
+require "nori/string_io_file"
+
 module Nori
 
   # This is a slighly modified version of the XMLUtilityNode from
@@ -85,21 +88,16 @@ module Nori
 
     def to_hash
       if @type == "file"
-        f = StringIO.new((@children.first || '').unpack('m').first)
-        class << f
-          attr_accessor :original_filename, :content_type
-        end
+        f = StringIOFile.new((@children.first || '').unpack('m').first)
         f.original_filename = attributes['name'] || 'untitled'
         f.content_type = attributes['content_type'] || 'application/octet-stream'
-        return {name => f}
+        return { name => f }
       end
 
       if @text
-        t = typecast_value( unnormalize_xml_entities( inner_html ) )
+        t = typecast_value unnormalize_xml_entities(inner_html)
         if t.is_a?(String)
-          class << t
-            attr_accessor :attributes
-          end
+          t = StringWithAttributes.new(t)
           t.attributes = attributes
         end
         return { name => t }

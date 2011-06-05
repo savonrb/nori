@@ -183,9 +183,10 @@ module Nori
     end
 
     def advanced_typecasting(value)
-      first = value.split.first
+      split = value.split
+      return value if split.size > 1
 
-      case first
+      case split.first
         when "true"       then true
         when "false"      then false
         when XS_DATE_TIME then DateTime.parse(value)

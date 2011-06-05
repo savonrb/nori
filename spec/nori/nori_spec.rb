@@ -141,6 +141,19 @@ describe Nori do
           parse("<value>1955-04-18T11:22:33-05:00</value>")["value"].should ==
             DateTime.parse("1955-04-18T11:22:33-05:00")
         end
+
+        it "should not transform Strings containing an xs:time String and more" do
+          parse("<value>09:33:55Z is a time</value>")["value"].should == "09:33:55Z is a time"
+        end
+
+        it "should not transform Strings containing an xs:date String and more" do
+          parse("<value>1955-04-18-05:00 is a date</value>")["value"].should == "1955-04-18-05:00 is a date"
+        end
+
+        it "should not transform Strings containing an xs:dateTime String and more" do
+          parse("<value>1955-04-18T11:22:33-05:00 is a dateTime</value>")["value"].should ==
+            "1955-04-18T11:22:33-05:00 is a dateTime"
+        end
       end
 
       context "Parsing xml with text and attributes" do

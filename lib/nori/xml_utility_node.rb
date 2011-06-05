@@ -18,6 +18,15 @@ module Nori
   # underlying parser.
   class XMLUtilityNode
 
+    # Simple xs:time Regexp.
+    XS_TIME = /\d{2}:\d{2}:\d{2}/
+
+    # Simple xs:date Regexp.
+    XS_DATE = /\d{4}-\d{2}-\d{2}/
+
+    # Simple xs:dateTime Regexp.
+    XS_DATE_TIME = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+
     def self.typecasts
       @@typecasts
     end
@@ -96,10 +105,13 @@ module Nori
 
       if @text
         t = typecast_value unnormalize_xml_entities(inner_html)
+        t = advanced_typecasting(t) if t.is_a?(String) && Nori.advanced_typecasting?
+
         if t.is_a?(String)
           t = StringWithAttributes.new(t)
           t.attributes = attributes
         end
+
         return { name => t }
       else
         #change repeating groups into an array
@@ -165,6 +177,19 @@ module Nori
       return value unless @type
       proc = self.class.typecasts[@type]
       proc.nil? ? value : proc.call(value)
+    end
+
+    def advanced_typecasting(value)
+      first = value.split.first
+
+      case first
+        when "true"       then true
+        when "false"      then false
+        when XS_DATE_TIME then DateTime.parse(value)
+        when XS_DATE      then Date.parse(value)
+        when XS_TIME      then Time.parse(value)
+        else                   value
+      end
     end
 
     # Take keys of the form foo-bar and convert them to foo_bar

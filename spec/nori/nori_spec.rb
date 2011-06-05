@@ -78,12 +78,69 @@ describe Nori do
       it "should prefix attributes with an @-sign to avoid problems with overwritten values" do
         xml =<<-XML
           <multiRef id="id1">
-            <approved>true</approved>
+            <login>grep</login>
             <id>76737</id>
           </multiRef>
         XML
 
-        parse(xml)["multiRef"].should == { "approved" => "true", "@id" => "id1", "id" => "76737" }
+        parse(xml)["multiRef"].should == { "login" => "grep", "@id" => "id1", "id" => "76737" }
+      end
+
+      context "without advanced typecasting" do
+        around do |example|
+          Nori.advanced_typecasting = false
+          example.run
+          Nori.advanced_typecasting = true
+        end
+
+        it "should not transform 'true'" do
+          parse("<value>true</value>")["value"].should == "true"
+        end
+
+        it "should not transform 'false'" do
+          parse("<value>false</value>")["value"].should == "false"
+        end
+
+        it "should not transform Strings matching the xs:time format" do
+          parse("<value>09:33:55Z</value>")["value"].should == "09:33:55Z"
+        end
+
+        it "should not transform Strings matching the xs:date format" do
+          parse("<value>1955-04-18-05:00</value>")["value"].should == "1955-04-18-05:00"
+        end
+
+        it "should not transform Strings matching the xs:dateTime format" do
+          parse("<value>1955-04-18T11:22:33-05:00</value>")["value"].should == "1955-04-18T11:22:33-05:00"
+        end
+      end
+
+      context "with advanced typecasting" do
+        around do |example|
+          Nori.advanced_typecasting = true
+          example.run
+          Nori.advanced_typecasting = false
+        end
+
+        it "should transform 'true' to TrueClass" do
+          parse("<value>true</value>")["value"].should == true
+        end
+
+        it "should transform 'false' to FalseClass" do
+          parse("<value>false</value>")["value"].should == false
+        end
+
+        it "should transform Strings matching the xs:time format to Time objects" do
+          parse("<value>09:33:55Z</value>")["value"].should == Time.parse("09:33:55Z")
+        end
+
+        it "should transform Strings matching the xs:date format to Date objects" do
+          parse("<value>1955-04-18-05:00</value>")["value"].should == Date.parse("1955-04-18-05:00")
+        end
+
+        it "should transform Strings matching the xs:dateTime format to DateTime objects" do
+          parse("<value>1955-04-18T11:22:33-05:00</value>")["value"].should ==
+            DateTime.parse("1955-04-18T11:22:33-05:00")
+        end
       end
 
       context "Parsing xml with text and attributes" do

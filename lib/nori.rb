@@ -3,16 +3,26 @@ require "nori/core_ext"
 require "nori/parser"
 
 module Nori
+  extend self
 
   # Translates the given +xml+ to a Hash. Accepts an optional +parser+ to use.
-  def self.parse(xml, parser = nil)
+  def parse(xml, parser = nil)
     return {} if xml.blank?
     Parser.parse xml, parser
   end
 
   # Sets the +parser+ to use.
-  def self.parser=(parser)
+  def parser=(parser)
     Parser.use = parser
+  end
+
+  # Sets whether to use advanced typecasting.
+  attr_writer :advanced_typecasting
+
+  # Returns whether to use advanced typecasting.
+  # Defaults to +true+.
+  def advanced_typecasting?
+    @advanced_typecasting != false
   end
 
 end

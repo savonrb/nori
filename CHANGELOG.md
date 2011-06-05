@@ -1,3 +1,17 @@
+== 0.3.0 (UPCOMING)
+
+* Feature: Added somewhat advanced typecasting:
+
+  What this means:
+
+  * "true" and "false" are converted to TrueClass and FalseClass
+  * Strings matching an xs:time, xs:date and xs:dateTime are converted
+    to Time, Date and DateTime objects.
+
+  You can disable this feature via:
+
+      Nori.advanced_typecasting = false
+
 == 0.2.2 (2011-05-16)
 
 * Fix: namespaced xs:nil values should be nil objects.

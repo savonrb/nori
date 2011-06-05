@@ -17,6 +17,16 @@
 
       Nori.strip_namespaces = true
 
+* Feature: Added an option to specify a custom formula to convert tags.
+  Here's an example:
+
+      Nori.configure do |config|
+        config.convert_tags_to { |tag| tag.snake_case.to_sym }
+      end
+
+      xml = '<userResponse><accountStatus>active</accountStatus></userResponse>'
+      parse(xml).should == { :user_response => { :account_status => "active" }
+
 == 0.2.2 (2011-05-16)
 
 * Fix: namespaced xs:nil values should be nil objects.

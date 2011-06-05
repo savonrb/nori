@@ -275,6 +275,19 @@ describe Nori do
         end
       end
 
+      context "with convert_tags_to set to a custom formula" do
+        around do |example|
+          Nori.convert_tags_to { |tag| tag.snake_case.to_sym }
+          example.run
+          Nori.convert_tags_to(nil)
+        end
+
+        it "transforms the tags to snakecase Symbols" do
+          xml = '<userResponse><accountStatus>active</accountStatus></userResponse>'
+          parse(xml).should == { :user_response => { :account_status => "active" } }
+        end
+      end
+
       it "should render nested content correctly" do
         xml = "<root><tag1>Tag1 Content <em><strong>This is strong</strong></em></tag1></root>"
         parse(xml)['root']['tag1'].should == "Tag1 Content <em><strong>This is strong</strong></em>"

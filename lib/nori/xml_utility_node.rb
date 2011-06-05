@@ -67,6 +67,8 @@ module Nori
 
       @name = name.tr("-", "_")
       @name = @name.split(":").last if Nori.strip_namespaces?
+      @name = Nori.convert_tag(@name) if Nori.convert_tags?
+
       # leave the type alone if we don't know what it is
       @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
 

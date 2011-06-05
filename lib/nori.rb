@@ -16,6 +16,11 @@ module Nori
     Parser.use = parser
   end
 
+  # Yields +self+ for configuration.
+  def configure
+    yield self
+  end
+
   # Sets whether to use advanced typecasting.
   attr_writer :advanced_typecasting
 
@@ -32,6 +37,22 @@ module Nori
   # Defaults to +false+.
   def strip_namespaces?
     @strip_namespaces
+  end
+
+  # Expects a +block+ which receives a tag to convert.
+  # Accepts +nil+ for a reset to the default behavior of not converting tags.
+  def convert_tags_to(reset = nil, &block)
+    @convert_tag = reset || block
+  end
+
+  # Transforms a given +tag+ using the specified conversion formula.
+  def convert_tag(tag)
+    @convert_tag.call(tag)
+  end
+
+  # Returns whether to convert tags.
+  def convert_tags?
+    @convert_tag
   end
 
 end

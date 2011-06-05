@@ -2,11 +2,17 @@ module Nori
   module CoreExt
     module String
 
-      def snake_case
-        return self.downcase if self =~ /^[A-Z]+$/
-        self.gsub(/([A-Z]+)(?=[A-Z][a-z]?)|\B[A-Z]/, '_\&') =~ /_*(.*)/
-        $+.downcase
-      end unless method_defined?(:snake_case)
+      # Returns the String in snake_case.
+      def snakecase
+        str = dup
+        str.gsub! /::/, '/'
+        str.gsub! /([A-Z]+)([A-Z][a-z])/, '\1_\2'
+        str.gsub! /([a-z\d])([A-Z])/, '\1_\2'
+        str.tr! ".", "_"
+        str.tr! "-", "_"
+        str.downcase!
+        str
+      end unless method_defined?(:snakecase)
 
     end
   end

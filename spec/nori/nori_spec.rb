@@ -290,7 +290,7 @@ describe Nori do
 
       context "with convert_tags_to set to a custom formula" do
         around do |example|
-          Nori.convert_tags_to { |tag| tag.snake_case.to_sym }
+          Nori.convert_tags_to { |tag| tag.snakecase.to_sym }
           example.run
           Nori.convert_tags_to(nil)
         end

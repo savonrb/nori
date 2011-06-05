@@ -65,20 +65,21 @@ module Nori
         [ key, unnormalize_xml_entities(value) ]
       end.flatten]
 
-      @name         = name.tr("-", "_")
+      @name = name.tr("-", "_")
+      @name = @name.split(":").last if Nori.strip_namespaces?
       # leave the type alone if we don't know what it is
-      @type         = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
+      @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
 
-      @nil_element  = false
+      @nil_element = false
       attributes.keys.each do |key|
         if result = /^((.*):)?nil$/.match(key)
           @nil_element = attributes.delete(key) == "true"
           attributes.delete("xmlns:#{result[2]}") if result[1]
         end
       end
-      @attributes   = undasherize_keys(attributes)
-      @children     = []
-      @text         = false
+      @attributes = undasherize_keys(attributes)
+      @children = []
+      @text = false
     end
 
     attr_accessor :name, :attributes, :children, :type

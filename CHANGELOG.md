@@ -12,6 +12,11 @@
 
       Nori.advanced_typecasting = false
 
+* Feature: Added an option to strip the namespaces from every tag.
+  This feature might raise problems and is therefore disabled by default.
+
+      Nori.strip_namespaces = true
+
 == 0.2.2 (2011-05-16)
 
 * Fix: namespaced xs:nil values should be nil objects.

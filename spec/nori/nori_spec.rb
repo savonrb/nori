@@ -248,6 +248,33 @@ describe Nori do
         parse(xml)['tag_1'].keys.should include('@attr_1')
       end
 
+      context "with strip_namespaces set to true" do
+        around do |example|
+          Nori.strip_namespaces = true
+          example.run
+          Nori.strip_namespaces = false
+        end
+
+        it "should strip the namespace from every tag" do
+          xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"></soap:Envelope>'
+          parse(xml).should have_key("Envelope")
+        end
+
+        it "converts namespaced entries to array elements" do
+          xml = <<-XML
+            <history
+                xmlns:ns10="http://ns10.example.com"
+                xmlns:ns11="http://ns10.example.com">
+              <ns10:case><ns10:name>a_name</ns10:name></ns10:case>
+              <ns11:case><ns11:name>another_name</ns11:name></ns11:case>
+            </history>
+          XML
+
+          expected_case = [{ "name" => "a_name" }, { "name" => "another_name" }]
+          parse(xml)["history"]["case"].should == expected_case
+        end
+      end
+
       it "should render nested content correctly" do
         xml = "<root><tag1>Tag1 Content <em><strong>This is strong</strong></em></tag1></root>"
         parse(xml)['root']['tag1'].should == "Tag1 Content <em><strong>This is strong</strong></em>"

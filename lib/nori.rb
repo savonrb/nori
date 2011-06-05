@@ -25,4 +25,13 @@ module Nori
     @advanced_typecasting != false
   end
 
+  # Sets whether to strip namespaces.
+  attr_writer :strip_namespaces
+
+  # Returns whether to strip namespaces.
+  # Defaults to +false+.
+  def strip_namespaces?
+    @strip_namespaces
+  end
+
 end

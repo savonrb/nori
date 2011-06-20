@@ -1,4 +1,6 @@
-== 0.3.0 (UPCOMING)
+== 1.0.0 (2011-06-20)
+
+* Notice: As of v1.0.0, Nori will follow [Semantic Versioning](http://semver.org).
 
 * Feature: Added somewhat advanced typecasting:
 

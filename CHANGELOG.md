@@ -34,6 +34,15 @@
       xml = '<userResponse><accountStatus>active</accountStatus></userResponse>'
       parse(xml).should == { :user_response => { :account_status => "active" }
 
+== 0.2.4 (2011-06-21)
+
+* Fix: backported fixes from v1.0.1
+
+== 0.2.3 (2011-05-26)
+
+* Fix: Use extended core classes StringWithAttributes and StringIOFile instead of
+  creating singletons to prevent serialization problems.
+
 == 0.2.2 (2011-05-16)
 
 * Fix: namespaced xs:nil values should be nil objects.

@@ -1,3 +1,8 @@
+== 1.0.1 (2011-06-21)
+
+* Fix: Make sure to always load both StringWithAttributes and StringIOFile
+  to prevent NameError's.
+
 == 1.0.0 (2011-06-20)
 
 * Notice: As of v1.0.0, Nori will follow [Semantic Versioning](http://semver.org).

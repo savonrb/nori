@@ -1,3 +1,8 @@
+== 0.2.4 (2011-06-21)
+
+* Fix: Make sure to always load both StringWithAttributes and StringIOFile
+  to prevent NameError's.
+
 == 0.2.3 (2011-05-26)
 
 * Fix: Use extended core classes StringWithAttributes and StringIOFile instead of

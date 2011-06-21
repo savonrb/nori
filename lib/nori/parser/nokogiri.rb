@@ -1,5 +1,4 @@
 require "nokogiri"
-require "nori/xml_utility_node"
 
 module Nori
   module Parser

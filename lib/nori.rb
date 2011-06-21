@@ -1,6 +1,7 @@
 require "nori/version"
 require "nori/core_ext"
 require "nori/parser"
+require "nori/xml_utility_node"
 
 module Nori
   extend self

@@ -1,5 +1,4 @@
 require "rexml/parsers/baseparser"
-require "nori/xml_utility_node"
 
 module Nori
   module Parser

@@ -1,3 +1,8 @@
+== 0.2.3 (2011-05-26)
+
+* Fix: Use extended core classes StringWithAttributes and StringIOFile instead of
+  creating singletons to prevent serialization problems.
+
 == 0.2.2 (2011-05-16)
 
 * Fix: namespaced xs:nil values should be nil objects.

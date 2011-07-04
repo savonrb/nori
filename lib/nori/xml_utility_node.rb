@@ -88,9 +88,13 @@ module Nori
 
     def prefixed_attributes
       attributes.inject({}) do |memo, (key, value)|
-        memo["@#{key}"] = value
+        memo[prefixed_attribute_name("@#{key}")] = value
         memo
       end
+    end
+
+    def prefixed_attribute_name(attribute)
+      Nori.convert_tags? ? Nori.convert_tag(attribute) : attribute
     end
 
     def add_node(node)

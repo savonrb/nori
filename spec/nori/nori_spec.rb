@@ -296,8 +296,8 @@ describe Nori do
         end
 
         it "transforms the tags to snakecase Symbols" do
-          xml = '<userResponse><accountStatus>active</accountStatus></userResponse>'
-          parse(xml).should == { :user_response => { :account_status => "active" } }
+          xml = '<userResponse id="1"><accountStatus>active</accountStatus></userResponse>'
+          parse(xml).should == { :user_response => { :@id => "1", :account_status => "active" } }
         end
       end
 

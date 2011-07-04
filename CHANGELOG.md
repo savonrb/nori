@@ -1,3 +1,8 @@
+== 1.0.2 (2011-07-04)
+
+* Fix: When specifying a custom formula to convert tags, XML attributes were ignored.
+  Now, a formula is applied to both XML tags and attributes.
+
 == 1.0.1 (2011-06-21)
 
 * Fix: Make sure to always load both StringWithAttributes and StringIOFile

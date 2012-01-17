@@ -632,6 +632,25 @@ describe Nori do
       end
 
     end
+
+    describe "using different nori" do
+      let(:parser) { parser }
+      let(:different_nori) do
+        module DifferentNori
+          extend Nori
+        end
+        DifferentNori.configure do |config|
+          config.convert_tags_to { |tag| tag.upcase }
+        end
+        DifferentNori
+      end
+
+      it "should transform with different nori" do
+        xml = "<SomeThing>xml</SomeThing>"
+        parse(xml).should == { "SomeThing" => "xml" }
+        different_nori.parse(xml, parser).should == { "SOMETHING" => "xml" }
+      end
+    end
   end
 
   def parse(xml)

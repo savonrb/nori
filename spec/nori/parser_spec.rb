@@ -34,4 +34,21 @@ describe Nori::Parser do
     end
   end
 
+  describe ".parse with different nori" do
+    let(:other_nori) do
+      module OtherNori
+        extend Nori
+      end
+      OtherNori.configure do |config|
+        config.convert_tags_to { |tag| tag.upcase }
+      end
+      OtherNori
+    end
+
+    it "should load the parser to use and parse the given xml" do
+      parser.parse("<SomeThing>xml</SomeThing>").should == { "SomeThing" => "xml" }
+      parser.parse("<SomeThing>xml</SomeThing>", nil, other_nori).should == { "SOMETHING" => "xml" }
+    end
+  end
+
 end

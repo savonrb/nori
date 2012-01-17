@@ -9,7 +9,7 @@ module Nori
   # Translates the given +xml+ to a Hash. Accepts an optional +parser+ to use.
   def parse(xml, parser = nil)
     return {} if xml.blank?
-    Parser.parse xml, parser
+    Parser.parse xml, parser, self
   end
 
   # Sets the +parser+ to use.

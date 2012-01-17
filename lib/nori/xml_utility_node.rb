@@ -59,15 +59,16 @@ module Nori
 
     self.available_typecasts = self.typecasts.keys
 
-    def initialize(name, normalized_attributes = {})
+    def initialize(nori, name, normalized_attributes = {})
       # unnormalize attribute values
       attributes = Hash[* normalized_attributes.map do |key, value|
         [ key, unnormalize_xml_entities(value) ]
       end.flatten]
 
+      @nori = nori
       @name = name.tr("-", "_")
-      @name = @name.split(":").last if Nori.strip_namespaces?
-      @name = Nori.convert_tag(@name) if Nori.convert_tags?
+      @name = @name.split(":").last if @nori.strip_namespaces?
+      @name = @nori.convert_tag(@name) if @nori.convert_tags?
 
       # leave the type alone if we don't know what it is
       @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
@@ -94,7 +95,7 @@ module Nori
     end
 
     def prefixed_attribute_name(attribute)
-      Nori.convert_tags? ? Nori.convert_tag(attribute) : attribute
+      @nori.convert_tags? ? @nori.convert_tag(attribute) : attribute
     end
 
     def add_node(node)
@@ -112,7 +113,7 @@ module Nori
 
       if @text
         t = typecast_value unnormalize_xml_entities(inner_html)
-        t = advanced_typecasting(t) if t.is_a?(String) && Nori.advanced_typecasting?
+        t = advanced_typecasting(t) if t.is_a?(String) && @nori.advanced_typecasting?
 
         if t.is_a?(String)
           t = StringWithAttributes.new(t)

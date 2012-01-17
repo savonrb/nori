@@ -9,13 +9,14 @@ module Nori
     module Nokogiri
 
       class Document < ::Nokogiri::XML::SAX::Document
+        attr_accessor :nori
 
         def stack
           @stack ||= []
         end
 
         def start_element(name, attrs = [])
-          stack.push Nori::XMLUtilityNode.new(name, Hash[*attrs.flatten])
+          stack.push Nori::XMLUtilityNode.new(nori, name, Hash[*attrs.flatten])
         end
 
         def end_element(name)
@@ -33,8 +34,9 @@ module Nori
 
       end
 
-      def self.parse(xml)
+      def self.parse(xml, nori)
         document = Document.new
+        document.nori = nori
         parser = ::Nokogiri::XML::SAX::Parser.new document
         parser.parse xml
         document.stack.length > 0 ? document.stack.pop.to_hash : {}

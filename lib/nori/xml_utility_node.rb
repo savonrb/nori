@@ -186,6 +186,14 @@ module Nori
       proc.nil? ? value : proc.call(value)
     end
 
+    def try_to_convert(value, &block)
+      begin
+        block.call(value)
+      rescue Exception => e
+        value
+      end
+    end
+
     def advanced_typecasting(value)
       split = value.split
       return value if split.size > 1
@@ -193,9 +201,9 @@ module Nori
       case split.first
         when "true"       then true
         when "false"      then false
-        when XS_DATE_TIME then DateTime.parse(value)
-        when XS_DATE      then Date.parse(value)
-        when XS_TIME      then Time.parse(value)
+        when XS_DATE_TIME then try_to_convert(value) {|x| DateTime.parse(x)}
+        when XS_DATE      then try_to_convert(value) {|x| Date.parse(x)}
+        when XS_TIME      then try_to_convert(value) {|x| Time.parse(x)}
         else                   value
       end
     end

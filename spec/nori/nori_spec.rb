@@ -154,6 +154,12 @@ describe Nori do
           parse("<value>1955-04-18T11:22:33-05:00 is a dateTime</value>")["value"].should ==
             "1955-04-18T11:22:33-05:00 is a dateTime"
         end
+
+        it "should not transform Strings with an invalid date or time" do
+          ["00-00-00","0000-00-00","0000-00-00T00:00:00"].each do |date_string|
+            parse("<value>#{date_string}</value>")["value"].should == date_string
+          end
+        end
       end
 
       context "Parsing xml with text and attributes" do

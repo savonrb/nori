@@ -193,9 +193,9 @@ module Nori
       case split.first
         when "true"       then true
         when "false"      then false
-        when XS_DATE_TIME then DateTime.parse(value)
-        when XS_DATE      then Date.parse(value)
-        when XS_TIME      then Time.parse(value)
+        when XS_DATE_TIME then try_to_convert(value) {|x| DateTime.parse(x)}
+        when XS_DATE      then try_to_convert(value) {|x| Date.parse(x)}
+        when XS_TIME      then try_to_convert(value) {|x| Time.parse(x)}
         else                   value
       end
     end
@@ -228,6 +228,14 @@ module Nori
     # TODO: replace REXML
     def unnormalize_xml_entities value
       REXML::Text.unnormalize(value)
+    end
+
+    def try_to_convert(value, &block)
+      begin
+        block.call(value)
+      rescue ArgumentError => e
+        value
+      end
     end
   end
 

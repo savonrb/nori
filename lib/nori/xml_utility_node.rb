@@ -186,14 +186,6 @@ module Nori
       proc.nil? ? value : proc.call(value)
     end
 
-    def try_to_convert(value, &block)
-      begin
-        block.call(value)
-      rescue Exception => e
-        value
-      end
-    end
-
     def advanced_typecasting(value)
       split = value.split
       return value if split.size > 1
@@ -236,6 +228,14 @@ module Nori
     # TODO: replace REXML
     def unnormalize_xml_entities value
       REXML::Text.unnormalize(value)
+    end
+
+    def try_to_convert(value, &block)
+      begin
+        block.call(value)
+      rescue ArgumentError => e
+        value
+      end
     end
   end
 

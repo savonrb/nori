@@ -190,13 +190,17 @@ module Nori
       split = value.split
       return value if split.size > 1
 
-      case split.first
-        when "true"       then true
-        when "false"      then false
-        when XS_DATE_TIME then DateTime.parse(value)
-        when XS_DATE      then Date.parse(value)
-        when XS_TIME      then Time.parse(value)
-        else                   value
+      begin
+        case split.first
+          when "true"       then true
+          when "false"      then false
+          when XS_DATE_TIME then DateTime.parse(value)
+          when XS_DATE      then Date.parse(value)
+          when XS_TIME      then Time.parse(value)
+          else                   value
+        end
+      rescue
+        value
       end
     end
 

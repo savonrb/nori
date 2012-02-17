@@ -34,6 +34,8 @@ module Nori
       end
 
       def self.parse(xml)
+        return {} if xml.strip.empty?
+
         document = Document.new
         parser = ::Nokogiri::XML::SAX::Parser.new document
         parser.parse xml

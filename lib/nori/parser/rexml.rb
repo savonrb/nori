@@ -8,7 +8,7 @@ module Nori
     # REXML pull parser.
     module REXML
 
-      def self.parse(xml)
+      def self.parse(xml, nori)
         stack = []
         parser = ::REXML::Parsers::BaseParser.new(xml)
 
@@ -20,7 +20,7 @@ module Nori
           when :end_doctype, :start_doctype
             # do nothing
           when :start_element
-            stack.push Nori::XMLUtilityNode.new(event[1], event[2])
+            stack.push Nori::XMLUtilityNode.new(nori, event[1], event[2])
           when :end_element
             if stack.size > 1
               temp = stack.pop

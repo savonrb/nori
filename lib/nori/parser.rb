@@ -27,8 +27,8 @@ module Nori
 
     # Returns the parsed +xml+ using the parser to use. Raises an +ArgumentError+
     # unless the optional or default +parser+ exists.
-    def self.parse(xml, parser = nil)
-      load_parser(parser).parse xml
+    def self.parse(xml, parser = nil, nori = Nori)
+      load_parser(parser).parse(xml, nori)
     end
 
   private

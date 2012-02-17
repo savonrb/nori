@@ -231,11 +231,9 @@ module Nori
     end
 
     def try_to_convert(value, &block)
-      begin
-        block.call(value)
-      rescue ArgumentError => e
-        value
-      end
+      block.call(value)
+    rescue ArgumentError
+      value
     end
   end
 

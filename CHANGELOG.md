@@ -1,3 +1,11 @@
+== 1.1.0 (2012-02-17)
+
+* Improvement: Merged [pull request 9](https://github.com/rubiii/nori/pull/9) to
+  allow multiple configurations of Nori.
+
+* Fix: Merged [pull request 10](https://github.com/rubiii/nori/pull/10) to handle
+  date/time parsing errors. Fixes a couple of similar error reports.
+
 == 1.0.2 (2011-07-04)
 
 * Fix: When specifying a custom formula to convert tags, XML attributes were ignored.

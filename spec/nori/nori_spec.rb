@@ -155,8 +155,8 @@ describe Nori do
             "1955-04-18T11:22:33-05:00 is a dateTime"
         end
 
-        it "should not transform Strings with an invalid date or time" do
-          ["00-00-00","0000-00-00","0000-00-00T00:00:00", "0569-23-0141", "DS2001-19-1312654773"].each do |date_string|
+        ["00-00-00", "0000-00-00", "0000-00-00T00:00:00", "0569-23-0141", "DS2001-19-1312654773", "e6:53:01:00:ce:b4:06"].each do |date_string|
+          it "should not transform a String like '#{date_string}' to date or time" do
             parse("<value>#{date_string}</value>")["value"].should == date_string
           end
         end

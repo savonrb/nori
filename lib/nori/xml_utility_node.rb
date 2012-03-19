@@ -73,6 +73,17 @@ module Nori
       # leave the type alone if we don't know what it is
       @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
 
+      unless @type
+        val = attributes["xsi:type"]
+        val.gsub!(/^.*:/, '') if val
+        if self.class.available_typecasts.include?(val) 
+          attributes.delete("xsi:type")
+          @type = val
+        else
+          @type = attributes["xsi:type"]
+        end
+      end
+
       @nil_element = false
       attributes.keys.each do |key|
         if result = /^((.*):)?nil$/.match(key)

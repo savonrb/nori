@@ -1,3 +1,48 @@
+== 2.0.0
+
+* Major change: Removed attributes from values and moved them to `Object#xml_attributes`.
+  Even though I don't like extending Object, this change solves a lot of problems and confusion
+  with XML attributes and values.
+
+    ``` xml
+    <Contact xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <Name xsi:type="xsd:string">Some name in here</Name>
+      <Address xsi:nil="true"></Address>
+    </Contact>
+    ```
+
+  What you got before this change was the "Name" without the attribute
+  and the `xsi` attribute from the "Contact" node prefixed with an @.
+
+    ``` ruby
+    old = {
+      "Contact" => {
+        "Name" => "Some name in here",
+        "Address" => nil,
+        "@xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance"
+      }
+    }
+    ```
+
+  What you get now, is this:
+
+    ``` ruby
+    new = {
+      "Contact" => {
+        "Name" => "Some name in here",
+        "Address" => nil
+      }
+    }
+    ```
+
+  No namespaces in your Hashes. If you need to access the attributes of node,
+  they are now stored on the nodes value.
+
+    ``` ruby
+    new["Contact"].xml_attributes  # => { "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance" }
+    new["Contact"]["Name"].xml_attributes  # => { "xsi:type" => "xsd:string" }
+    ```
+
 == 1.1.0 (2012-02-17)
 
 * Improvement: Merged [pull request 9](https://github.com/rubiii/nori/pull/9) to

@@ -4,6 +4,9 @@ require "time"
 require "yaml"
 require "bigdecimal"
 
+require "nori/string_with_attributes"
+require "nori/string_io_file"
+
 module Nori
 
   # This is a slighly modified version of the XMLUtilityNode from
@@ -105,14 +108,14 @@ module Nori
 
     attr_accessor :name, :attributes, :children, :type
 
-    def prepared_attributes
+    def prefixed_attributes
       attributes.inject({}) do |memo, (key, value)|
-        memo[prepared_attribute_name(key)] = value
+        memo[prefixed_attribute_name("@#{key}")] = value
         memo
       end
     end
 
-    def prepared_attribute_name(attribute)
+    def prefixed_attribute_name(attribute)
       @nori.convert_tags? ? @nori.convert_tag(attribute) : attribute
     end
 
@@ -123,18 +126,20 @@ module Nori
 
     def to_hash
       if @type == "file"
-        f = StringIO.new((@children.first || '').unpack('m').first)
-        f.xml_attributes = {
-          :original_filename => (attributes['name'] || 'untitled'),
-          :content_type => (attributes['content_type'] || 'application/octet-stream')
-        }
+        f = StringIOFile.new((@children.first || '').unpack('m').first)
+        f.original_filename = attributes['name'] || 'untitled'
+        f.content_type = attributes['content_type'] || 'application/octet-stream'
         return { name => f }
       end
 
       if @text
         t = typecast_value unnormalize_xml_entities(inner_html)
         t = advanced_typecasting(t) if t.is_a?(String) && @nori.advanced_typecasting?
-        t.xml_attributes = attributes
+
+        if t.is_a?(String)
+          t = StringWithAttributes.new(t)
+          t.attributes = attributes
+        end
 
         return { name => t }
       else
@@ -162,13 +167,15 @@ module Nori
               out.merge!( k => v.map{|e| e.to_hash[k]})
             end
           end
+          out.merge! prefixed_attributes unless attributes.empty?
           out = out.empty? ? nil : out
         end
 
-        out = typecast_value(out) if @type && out.nil?
-        out.xml_attributes = prepared_attributes unless attributes.empty?
-
-        { name => out }
+        if @type && out.nil?
+          { name => typecast_value(out) }
+        else
+          { name => out }
+        end
       end
     end
 

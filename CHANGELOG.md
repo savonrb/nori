@@ -43,7 +43,11 @@
     new["Contact"]["Name"].xml_attributes  # => { "xsi:type" => "xsd:string" }
     ```
 
-## 1.1.1 (2012-02-29)
+## 1.1.2 (2012-02-30)
+
+* Fix: Reverted `Object#xml_attributes` feature which is planned for version 2.0.
+
+## 1.1.1 (2012-02-29) - yanked
 
 * Fix: Merged [pull request 17](https://github.com/rubiii/nori/pull/17) for improved
   xs:time/xs:date/xs:dateTime regular expression matchers.

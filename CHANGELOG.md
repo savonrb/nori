@@ -1,4 +1,4 @@
-## 2.0.0
+## 2.0.0 (UPCOMING)
 
 * Major change: Removed attributes from values and moved them to `Object#xml_attributes`.
   Even though I don't like extending Object, this change solves a lot of problems and confusion
@@ -42,6 +42,11 @@
     new["Contact"].xml_attributes  # => { "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance" }
     new["Contact"]["Name"].xml_attributes  # => { "xsi:type" => "xsd:string" }
     ```
+
+## 1.1.1 (2012-02-29)
+
+* Fix: Merged [pull request 17](https://github.com/rubiii/nori/pull/17) for improved
+  xs:time/xs:date/xs:dateTime regular expression matchers.
 
 ## 1.1.0 (2012-02-17)
 

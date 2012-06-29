@@ -134,15 +134,19 @@ describe Nori do
 
         it "should not transform Strings containing an xs:time String and more" do
           parse("<value>09:33:55Z is a time</value>")["value"].should == "09:33:55Z is a time"
+          parse("<value>09:33:55Z_is_a_file_name</value>")["value"].should == "09:33:55Z_is_a_file_name"
         end
 
         it "should not transform Strings containing an xs:date String and more" do
           parse("<value>1955-04-18-05:00 is a date</value>")["value"].should == "1955-04-18-05:00 is a date"
+          parse("<value>1955-04-18-05:00_is_a_file_name</value>")["value"].should == "1955-04-18-05:00_is_a_file_name"
         end
 
         it "should not transform Strings containing an xs:dateTime String and more" do
           parse("<value>1955-04-18T11:22:33-05:00 is a dateTime</value>")["value"].should ==
             "1955-04-18T11:22:33-05:00 is a dateTime"
+          parse("<value>1955-04-18T11:22:33-05:00_is_a_file_name</value>")["value"].should ==
+            "1955-04-18T11:22:33-05:00_is_a_file_name"
         end
 
         ["00-00-00", "0000-00-00", "0000-00-00T00:00:00", "0569-23-0141", "DS2001-19-1312654773", "e6:53:01:00:ce:b4:06"].each do |date_string|

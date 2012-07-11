@@ -133,8 +133,16 @@ describe Nori do
           parse("<value>09:33:55Z</value>")["value"].should == Time.parse("09:33:55Z")
         end
 
+        it "should transform Strings matching the xs:time format to Time objects with positive offset" do
+          parse("<value>09:33:55+05:30</value>")["value"].should == Time.parse("09:33:55+05:30")
+        end
+
         it "should transform Strings matching the xs:date format to Date objects" do
           parse("<value>1955-04-18-05:00</value>")["value"].should == Date.parse("1955-04-18-05:00")
+        end
+
+        it "should transform Strings matching the xs:date format to Date objects with positive time zone offset" do
+          parse("<value>1955-04-18+05:00</value>")["value"].should == Date.parse("1955-04-18+05:00")
         end
 
         it "should transform Strings matching the xs:dateTime format to DateTime objects" do
@@ -142,6 +150,10 @@ describe Nori do
             DateTime.parse("1955-04-18T11:22:33-05:00")
         end
 
+        it "should transform Strings matching the xs:dateTime format to DateTime objects with positive time zone offset" do
+          parse("<value>1955-04-18T11:22:33+05:00</value>")["value"].should ==
+            DateTime.parse("1955-04-18T11:22:33+05:00")
+        end
         it "should not transform Strings containing an xs:time String and more" do
           parse("<value>09:33:55Z is a time</value>")["value"].should == "09:33:55Z is a time"
           parse("<value>09:33:55Z_is_a_file_name</value>")["value"].should == "09:33:55Z_is_a_file_name"

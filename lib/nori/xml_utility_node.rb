@@ -46,9 +46,10 @@ module Nori
     # 2004-04-12T13:20:15.5         1:20 pm and 15.5 seconds on April 12, 2004
     # 2004-04-12T13:20:00-05:00     1:20 pm on April 12, 2004, US Eastern Standard Time
     # 2004-04-12T13:20:00+02:00     1:20 pm on April 12, 2004, Central European Summer Time
+    # 2004-04-12T13:20:15.5-05:00   1:20 pm and 15.5 seconds on April 12, 2004, US Eastern Standard Time
     # 2004-04-12T13:20:00Z          1:20 pm on April 12, 2004, Coordinated Universal Time (UTC)
 
-    XS_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[\.Z\-\+]?\d*:?\d*$/
+    XS_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[\.Z]?\d*[\-\+]?\d*:?\d*$/
 
     def self.typecasts
       @@typecasts

@@ -1,3 +1,9 @@
+## 1.1.3 (2012-07-12)
+
+* Fix: Merged [pull request 21](https://github.com/rubiii/nori/pull/21) to fix an
+  issue with date/time/datetime regexes not matching positive time zone offsets and
+  datetime strings with seconds.
+
 ## 1.1.2 (2012-06-30)
 
 * Fix: Reverted `Object#xml_attributes` feature which is planned for version 2.0.

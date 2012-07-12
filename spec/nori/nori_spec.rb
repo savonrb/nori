@@ -137,6 +137,10 @@ describe Nori do
           parse("<value>1955-04-18-05:00</value>")["value"].should == Date.parse("1955-04-18-05:00")
         end
 
+        it "should transform Strings matching the xs:dateTime format ahead of utc to Date objects" do
+          parse("<value>1955-04-18+02:00</value>")["value"].should == Date.parse("1955-04-18+02:00")
+        end
+
         it "should transform Strings matching the xs:dateTime format to DateTime objects" do
           parse("<value>1955-04-18T11:22:33-05:00</value>")["value"].should ==
             DateTime.parse("1955-04-18T11:22:33-05:00")

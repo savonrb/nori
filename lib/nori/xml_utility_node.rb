@@ -35,9 +35,10 @@ module Nori
     # -0045-01-01          January 1, 45 BC
     # 12004-04-12          April 12, 12004
     # 2004-04-12-05:00     April 12, 2004, US Eastern Standard Time, which is 5 hours behind Coordinated Universal Time (UTC)
+    # 2004-04-12+02:00     April 12, 2004, Central European Summer Time, which is 2 hours ahead of Coordinated Universal Time (UTC)
     # 2004-04-12Z          April 12, 2004, Coordinated Universal Time (UTC)
 
-    XS_DATE = /^[-]?\d{4}-\d{2}-\d{2}[Z\-]?\d*:?\d*$/
+    XS_DATE = /^[-]?\d{4}-\d{2}-\d{2}[Z\-\+]?\d*:?\d*$/
 
     # Simple xs:dateTime Regexp.
     # Valid xs:dateTime formats

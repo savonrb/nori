@@ -23,11 +23,12 @@ module Nori
     # 13:20:00          1:20 PM
     # 13:20:30.5555     1:20 PM and 30.5555 seconds
     # 13:20:00-05:00    1:20 PM, US Eastern Standard Time
+    # 13:20:00+02:00    1:20 PM, Central European Standard Time
     # 13:20:00Z         1:20 PM, Coordinated Universal Time (UTC)
     # 00:00:00          midnight
     # 24:00:00          midnight
 
-    XS_TIME = /^\d{2}:\d{2}:\d{2}[Z\.\-]?\d*:?\d*$/
+    XS_TIME = /^\d{2}:\d{2}:\d{2}[Z\.\-\+]?\d*:?\d*$/
 
     # Simple xs:date Regexp.
     # Valid xs:date formats

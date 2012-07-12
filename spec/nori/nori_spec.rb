@@ -133,6 +133,10 @@ describe Nori do
           parse("<value>09:33:55Z</value>")["value"].should == Time.parse("09:33:55Z")
         end
 
+        it "should transform Strings matching the xs:time format ahead of utc to Time objects" do
+          parse("<value>09:33:55+02:00</value>")["value"].should == Time.parse("09:33:55+02:00")
+        end
+
         it "should transform Strings matching the xs:date format to Date objects" do
           parse("<value>1955-04-18-05:00</value>")["value"].should == Date.parse("1955-04-18-05:00")
         end

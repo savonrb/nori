@@ -140,7 +140,7 @@ module Nori
         t = typecast_value unnormalize_xml_entities(inner_html)
         t = advanced_typecasting(t) if t.is_a?(String) && @nori.advanced_typecasting?
 
-        if t.is_a?(String)
+        if t.is_a?(String) && attributes && attributes != {}
           t = StringWithAttributes.new(t)
           t.attributes = attributes
         end

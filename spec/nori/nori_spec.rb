@@ -659,6 +659,27 @@ describe Nori do
         parse(' ').should == {}
       end
 
+      it "should be able to serialize and deserialize the hash to yaml losslessly" do
+        xml = <<-EOT
+<product>
+<item>1</item>
+</product>
+EOT
+        hash = parse(xml)
+        unserialized = YAML.load YAML.dump(hash)
+        unserialized.should == hash
+      end
+
+      it "even with attributes should be able to serialize and deserialize the hash to yaml losslessly" do
+        xml = <<-EOT
+<product thing="thing">
+<item>1</item>
+</product>
+EOT
+        hash = parse(xml)
+        unserialized = YAML.load YAML.dump(hash)
+        unserialized.should == hash
+      end
     end
 
     describe "using different nori" do

@@ -210,8 +210,8 @@ describe Nori do
           @data['opt']['user'][0].attributes.should == {'login' => 'grep'}
         end
 
-        it "default attributes to empty hash if not present" do
-          @data['opt']['user'][1].attributes.should == {}
+        it "doesn't respond to attributes if there aren't any" do
+          @data['opt']['user'][1].should_not respond_to(:attributes)
         end
 
         it "add 'attributes' accessor methods to parsed instances of String" do
@@ -657,6 +657,28 @@ describe Nori do
       # As returned in the response body by the unfuddle XML API when creating objects
       it "handle an xml string containing a single space" do
         parse(' ').should == {}
+      end
+      
+      it "should be able to serialize and deserialize the hash to yaml losslessly" do
+        xml = <<-EOT
+          <product>
+            <item>1</item>
+          </product>
+        EOT
+        hash = parse(xml)
+        unserialized = YAML::load(YAML::dump(hash))
+        unserialized.should == hash
+      end
+
+      it "even with attributes should be able to serialize and deserialize the hash to yaml losslessly" do
+        xml = <<-EOT
+          <product thing="thing">
+            <item>1</item>
+          </product>
+        EOT
+        hash = parse(xml)
+        unserialized = YAML::load(YAML::dump(hash))
+        unserialized.should == hash
       end
 
       it "should be able to serialize and deserialize the hash to yaml losslessly" do

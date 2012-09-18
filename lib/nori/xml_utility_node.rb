@@ -85,6 +85,11 @@ class Nori
       @options = options
       @name = Nori.hash_key(name, options)
 
+      if converter = options[:convert_attributes_to]
+        intermediate = attributes.map {|k, v| converter.call(k, v) }.flatten
+        attributes = Hash[*intermediate]
+      end
+
       # leave the type alone if we don't know what it is
       @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
 
@@ -238,16 +243,17 @@ class Nori
       attributes.merge!(:type => @type ) if @type
       "<#{name}#{attributes.to_xml_attributes}>#{@nil_element ? '' : inner_html}</#{name}>"
     end
-
     alias to_s to_html
 
   private
-
     def try_to_convert(value, &block)
       block.call(value)
     rescue ArgumentError
       value
     end
-  end
 
+    def strip_namespace(string)
+      string.split(":").last
+    end
+  end
 end

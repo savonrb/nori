@@ -18,6 +18,7 @@ class Nori
       :strip_namespaces             => false,
       :delete_namespace_attributes  => false,
       :convert_tags_to              => nil,
+      :convert_attributes_to        => nil,
       :advanced_typecasting         => true,
       :parser                       => :nokogiri
     }
@@ -45,10 +46,15 @@ class Nori
   end
 
   private
-
   def load_parser(parser)
     require "nori/parser/#{parser}"
     Parser.const_get PARSERS[parser]
+  end
+
+  # Expects a +block+ which receives a tag to convert.
+  # Accepts +nil+ for a reset to the default behavior of not converting tags.
+  def convert_tags_to(reset = nil, &block)
+    @convert_tag = reset || block
   end
 
   def validate_options!(available_options, options)

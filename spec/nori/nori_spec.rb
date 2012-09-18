@@ -460,6 +460,17 @@ describe Nori do
         end
       end
 
+      context "with convert_attributes_to set to a custom formula" do
+        it "alters attributes and values" do
+          converter = lambda {|key, value| ["#{key}_k", "#{value}_v"] }
+          xml = <<-XML
+            <user name="value"><age>21</age></user>
+          XML
+
+          parse(xml, :convert_attributes_to => converter).should == {'user' => {'@name_k' => 'value_v', 'age' => '21'}}
+        end
+      end
+
       it "should handle a single record from_xml with attributes other than type (ActiveSupport Compatible)" do
         topic_xml = <<-EOT
         <rsp stat="ok">
@@ -600,15 +611,15 @@ describe Nori do
         parse(product_xml)["product"].should == expected_product_hash
       end
 
-      it "should handle unescaping from xml (ActiveResource Compatible)" #do
-#        xml_string = '<person><bare-string>First &amp; Last Name</bare-string><pre-escaped-string>First &amp;amp; Last Name</pre-escaped-string></person>'
-#        expected_hash = {
-#          'bare_string'        => 'First & Last Name',
-#          'pre_escaped_string' => 'First &amp; Last Name'
-#        }
-#
-#        parse(xml_string)['person'].should == expected_hash
-#      end
+      it "should handle unescaping from xml (ActiveResource Compatible)" do
+       xml_string = '<person><bare-string>First &amp; Last Name</bare-string><pre-escaped-string>First &amp;amp; Last Name</pre-escaped-string></person>'
+       expected_hash = {
+         'bare_string'        => 'First & Last Name',
+         'pre_escaped_string' => 'First &amp; Last Name'
+       }
+
+       parse(xml_string)['person'].should == expected_hash
+     end
 
       it "handle an empty xml string" do
         parse('').should == {}
@@ -623,8 +634,7 @@ describe Nori do
   end
 
   def parse(xml, options = {})
-    defaults = { :parser => parser }
+    defaults = {:parser => parser}
     Nori.new(defaults.merge(options)).parse(xml)
   end
-
 end

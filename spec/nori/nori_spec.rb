@@ -301,6 +301,20 @@ describe Nori do
           parse(xml).should have_key("Envelope")
         end
 
+        it "strips namespaces from attributes" do
+          xml = <<-XML
+            <m:GetStock xmlns:m="http://www.example.org/stock">
+              <m:Stock m:company="International Business Machines"><m:name>IBM</m:name></m:Stock>
+            </m:GetStock>
+          XML
+
+          expected_stock_hash = { "Stock" => { "name" => "IBM",
+                                         "@company" => "International Business Machines"},
+                            "@m"=>"http://www.example.org/stock" }
+
+          parse(xml)['GetStock'].should == expected_stock_hash
+        end
+
         it "converts namespaced entries to array elements" do
           xml = <<-XML
             <history

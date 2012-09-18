@@ -87,6 +87,7 @@ module Nori
     def initialize(nori, name, normalized_attributes = {})
       # unnormalize attribute values
       attributes = Hash[* normalized_attributes.map do |key, value|
+        key, value = Nori.convert_attribute(key, value) if Nori.convert_attributes?
         [ key, unnormalize_xml_entities(value) ]
       end.flatten]
 

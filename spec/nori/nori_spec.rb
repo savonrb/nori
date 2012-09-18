@@ -316,6 +316,22 @@ describe Nori do
         end
       end
 
+      context "with convert_attributes_to set to a custom formula" do
+        around do |example|
+          Nori.convert_attributes_to { |key, value| ["#{key}_k", "#{value}_v"] }
+          example.run
+          Nori.convert_attributes_to(nil)
+        end
+
+        it "alters attributes and values" do
+          xml = <<-XML
+            <user name="value"><age>21</age></user>
+          XML
+
+          parse(xml).should == {'user' => {'@name_k' => 'value_v', 'age' => '21'}}
+        end
+      end
+
       context "with convert_tags_to set to a custom formula" do
         around do |example|
           Nori.convert_tags_to { |tag| tag.snakecase.to_sym }

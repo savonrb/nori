@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe Nori do
 
-  Nori::Parser::PARSERS.each do |parser, class_name|
+  Nori::PARSERS.each do |parser, class_name|
     context "using the :#{parser} parser" do
 
       let(:parser) { parser }
@@ -87,40 +87,33 @@ describe Nori do
       end
 
       context "without advanced typecasting" do
-        around do |example|
-          Nori.advanced_typecasting = false
-          example.run
-          Nori.advanced_typecasting = true
-        end
-
         it "should not transform 'true'" do
-          parse("<value>true</value>")["value"].should == "true"
+          hash = parse("<value>true</value>", :advanced_typecasting => false)
+          hash["value"].should == "true"
         end
 
         it "should not transform 'false'" do
-          parse("<value>false</value>")["value"].should == "false"
+          hash = parse("<value>false</value>", :advanced_typecasting => false)
+          hash["value"].should == "false"
         end
 
         it "should not transform Strings matching the xs:time format" do
-          parse("<value>09:33:55Z</value>")["value"].should == "09:33:55Z"
+          hash = parse("<value>09:33:55Z</value>", :advanced_typecasting => false)
+          hash["value"].should == "09:33:55Z"
         end
 
         it "should not transform Strings matching the xs:date format" do
-          parse("<value>1955-04-18-05:00</value>")["value"].should == "1955-04-18-05:00"
+          hash = parse("<value>1955-04-18-05:00</value>", :advanced_typecasting => false)
+          hash["value"].should == "1955-04-18-05:00"
         end
 
         it "should not transform Strings matching the xs:dateTime format" do
-          parse("<value>1955-04-18T11:22:33-05:00</value>")["value"].should == "1955-04-18T11:22:33-05:00"
+          hash = parse("<value>1955-04-18T11:22:33-05:00</value>", :advanced_typecasting => false)
+          hash["value"].should == "1955-04-18T11:22:33-05:00"
         end
       end
 
       context "with advanced typecasting" do
-        around do |example|
-          Nori.advanced_typecasting = true
-          example.run
-          Nori.advanced_typecasting = false
-        end
-
         it "should transform 'true' to TrueClass" do
           parse("<value>true</value>")["value"].should == true
         end
@@ -287,46 +280,6 @@ describe Nori do
         xml = "<tag-1 attr-1='1'></tag-1>"
         parse(xml).keys.should include('tag_1')
         parse(xml)['tag_1'].keys.should include('@attr_1')
-      end
-
-      context "with strip_namespaces set to true" do
-        around do |example|
-          Nori.strip_namespaces = true
-          example.run
-          Nori.strip_namespaces = false
-        end
-
-        it "should strip the namespace from every tag" do
-          xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"></soap:Envelope>'
-          parse(xml).should have_key("Envelope")
-        end
-
-        it "converts namespaced entries to array elements" do
-          xml = <<-XML
-            <history
-                xmlns:ns10="http://ns10.example.com"
-                xmlns:ns11="http://ns10.example.com">
-              <ns10:case><ns10:name>a_name</ns10:name></ns10:case>
-              <ns11:case><ns11:name>another_name</ns11:name></ns11:case>
-            </history>
-          XML
-
-          expected_case = [{ "name" => "a_name" }, { "name" => "another_name" }]
-          parse(xml)["history"]["case"].should == expected_case
-        end
-      end
-
-      context "with convert_tags_to set to a custom formula" do
-        around do |example|
-          Nori.convert_tags_to { |tag| tag.snakecase.to_sym }
-          example.run
-          Nori.convert_tags_to(nil)
-        end
-
-        it "transforms the tags to snakecase Symbols" do
-          xml = '<userResponse id="1"><accountStatus>active</accountStatus></userResponse>'
-          parse(xml).should == { :user_response => { :@id => "1", :account_status => "active" } }
-        end
       end
 
       it "should render nested content correctly" do
@@ -660,29 +613,11 @@ describe Nori do
       end
 
     end
-
-    describe "using different nori" do
-      let(:parser) { parser }
-      let(:different_nori) do
-        module DifferentNori
-          extend Nori
-        end
-        DifferentNori.configure do |config|
-          config.convert_tags_to { |tag| tag.upcase }
-        end
-        DifferentNori
-      end
-
-      it "should transform with different nori" do
-        xml = "<SomeThing>xml</SomeThing>"
-        parse(xml).should == { "SomeThing" => "xml" }
-        different_nori.parse(xml, parser).should == { "SOMETHING" => "xml" }
-      end
-    end
   end
 
-  def parse(xml)
-    Nori.parse xml, parser
+  def parse(xml, locals = {})
+    defaults = { :parser => parser }
+    Nori.new.parse xml, defaults.merge(locals)
   end
 
 end

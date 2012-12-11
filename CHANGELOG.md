@@ -1,3 +1,23 @@
+# 2.0 (UPCOMING)
+
+Please make sure to read the updated README for how to use the new version.
+
+* Refactoring: Changed the `Nori` module to a class. This might cause problems if you
+  included the `Nori` module somewhere in your application. This use case was removed
+  for overall simplicity.
+
+* Refactoring: Changed the interface to remove any global state. The global configuration
+  is gone and split up between initializing a new `Nori` instance and passing the xml to
+  the new `#parse` method.
+
+    ``` ruby
+    parser = Nori.new(strip_namespaces: true)
+    parser.parse(xml, parser: :nokogiri)
+    ```
+
+* Refactoring: Removed the `Nori::Parser` module methods. After refactoring the rest,
+  there was only a single method left for this module and that was moved to `Nori`.
+
 ## 1.1.3 (2012-07-12)
 
 * Fix: Merged [pull request 21](https://github.com/savonrb/nori/pull/21) to fix an

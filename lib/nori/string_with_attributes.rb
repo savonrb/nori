@@ -1,4 +1,4 @@
-module Nori
+class Nori
   class StringWithAttributes < String
 
     attr_accessor :attributes

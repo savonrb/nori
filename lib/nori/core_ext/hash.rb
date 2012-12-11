@@ -1,6 +1,6 @@
 require "uri"
 
-module Nori
+class Nori
   module CoreExt
     module Hash
 

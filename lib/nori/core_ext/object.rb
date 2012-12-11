@@ -1,4 +1,4 @@
-module Nori
+class Nori
   module CoreExt
     module Object
 

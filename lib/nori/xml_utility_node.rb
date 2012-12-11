@@ -7,7 +7,7 @@ require "bigdecimal"
 require "nori/string_with_attributes"
 require "nori/string_io_file"
 
-module Nori
+class Nori
 
   # This is a slighly modified version of the XMLUtilityNode from
   # http://merb.devjavu.com/projects/merb/ticket/95 (has.sox@gmail.com)
@@ -84,16 +84,16 @@ module Nori
 
     self.available_typecasts = self.typecasts.keys
 
-    def initialize(nori, name, normalized_attributes = {})
+    def initialize(options, name, normalized_attributes = {})
       # unnormalize attribute values
       attributes = Hash[* normalized_attributes.map do |key, value|
         [ key, unnormalize_xml_entities(value) ]
       end.flatten]
 
-      @nori = nori
-      @name = name.tr("-", "_")
-      @name = @name.split(":").last if @nori.strip_namespaces?
-      @name = @nori.convert_tag(@name) if @nori.convert_tags?
+      @options = options
+      @name    = name.tr("-", "_")
+      @name    = @name.split(":").last if @options[:strip_namespaces]
+      @name    = @options[:convert_tags_to].call(@name) if @options[:convert_tags_to].respond_to? :call
 
       # leave the type alone if we don't know what it is
       @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
@@ -120,7 +120,8 @@ module Nori
     end
 
     def prefixed_attribute_name(attribute)
-      @nori.convert_tags? ? @nori.convert_tag(attribute) : attribute
+      return attribute unless @options[:convert_tags_to].respond_to? :call
+      @options[:convert_tags_to].call(attribute)
     end
 
     def add_node(node)
@@ -138,7 +139,7 @@ module Nori
 
       if @text
         t = typecast_value unnormalize_xml_entities(inner_html)
-        t = advanced_typecasting(t) if t.is_a?(String) && @nori.advanced_typecasting?
+        t = advanced_typecasting(t) if t.is_a?(String) && @options[:advanced_typecasting]
 
         if t.is_a?(String)
           t = StringWithAttributes.new(t)

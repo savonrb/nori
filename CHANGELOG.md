@@ -1,6 +1,6 @@
 ## 1.1.3 (2012-07-12)
 
-* Fix: Merged [pull request 21](https://github.com/rubiii/nori/pull/21) to fix an
+* Fix: Merged [pull request 21](https://github.com/savonrb/nori/pull/21) to fix an
   issue with date/time/datetime regexes not matching positive time zone offsets and
   datetime strings with seconds.
 
@@ -10,15 +10,15 @@
 
 ## 1.1.1 (2012-06-29) - yanked
 
-* Fix: Merged [pull request 17](https://github.com/rubiii/nori/pull/17) for improved
+* Fix: Merged [pull request 17](https://github.com/savonrb/nori/pull/17) for improved
   xs:time/xs:date/xs:dateTime regular expression matchers.
 
 ## 1.1.0 (2012-02-17)
 
-* Improvement: Merged [pull request 9](https://github.com/rubiii/nori/pull/9) to
+* Improvement: Merged [pull request 9](https://github.com/savonrb/nori/pull/9) to
   allow multiple configurations of Nori.
 
-* Fix: Merged [pull request 10](https://github.com/rubiii/nori/pull/10) to handle
+* Fix: Merged [pull request 10](https://github.com/savonrb/nori/pull/10) to handle
   date/time parsing errors. Fixes a couple of similar error reports.
 
 ## 1.0.2 (2011-07-04)

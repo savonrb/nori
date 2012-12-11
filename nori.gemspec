@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Nori::VERSION
   s.authors     = ["Daniel Harrington", "John Nunemaker", "Wynn Netherland"]
   s.email       = "me@rubiii.com"
-  s.homepage    = "http://github.com/rubiii/nori"
+  s.homepage    = "https://github.com/savonrb/nori"
   s.summary     = "XML to Hash translator"
   s.description = s.summary
 

@@ -75,20 +75,11 @@ describe Nori do
       Nori::Parser::REXML.should_receive(:parse)
       nori.parse("<any>thing</any>")
     end
-
-    it "raises when the first parameter is not a String" do
-      expect { nori.parse({}) }.to raise_error(ArgumentError, "Expected a String to parse, got: {}")
-    end
-
-    it "raises when passed unknown local options" do
-      expect { nori.parse("", :unknown => true) }.
-        to raise_error(ArgumentError, /Spurious options: \[:unknown\]/)
-    end
   end
 
   context "#parse without :advanced_typecasting" do
     it "can be changed to not typecast too much" do
-      hash = nori.parse("<value>true</value>", :advanced_typecasting => false)
+      hash = nori(:advanced_typecasting => false).parse("<value>true</value>")
       hash["value"].should == "true"
     end
   end
@@ -99,12 +90,12 @@ describe Nori do
       require "nori/parser/nokogiri"
 
       Nori::Parser::Nokogiri.should_receive(:parse)
-      nori.parse("<any>thing</any>", :parser => :nokogiri)
+      nori(:parser => :nokogiri).parse("<any>thing</any>")
     end
   end
 
-  def nori(globals = {})
-    Nori.new(globals)
+  def nori(options = {})
+    Nori.new(options)
   end
 
 end

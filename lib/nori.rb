@@ -6,29 +6,21 @@ class Nori
 
   PARSERS = { :rexml => "REXML", :nokogiri => "Nokogiri" }
 
-  def initialize(globals = {})
+  def initialize(options = {})
     defaults = {
-      :strip_namespaces => false,
-      :convert_tags_to  => nil
-    }
-
-    validate_options! defaults.keys, globals.keys
-    @globals = defaults.merge(globals)
-  end
-
-  def parse(xml, locals = {})
-    validate_xml! xml
-
-    defaults = {
+      :strip_namespaces     => false,
+      :convert_tags_to      => nil,
       :advanced_typecasting => true,
       :parser               => :rexml
     }
 
-    validate_options! defaults.keys, locals.keys
-    options = @globals.merge defaults.merge(locals)
+    validate_options! defaults.keys, options.keys
+    @options = defaults.merge(options)
+  end
 
-    parser = load_parser options[:parser]
-    parser.parse(xml, options)
+  def parse(xml)
+    parser = load_parser @options[:parser]
+    parser.parse(xml, @options)
   end
 
   private
@@ -36,11 +28,6 @@ class Nori
   def load_parser(parser)
     require "nori/parser/#{parser}"
     Parser.const_get PARSERS[parser]
-  end
-
-  def validate_xml!(xml)
-    return if xml.kind_of? String
-    raise ArgumentError, "Expected a String to parse, got: #{xml.inspect}"
   end
 
   def validate_options!(available_options, options)

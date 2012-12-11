@@ -615,9 +615,9 @@ describe Nori do
     end
   end
 
-  def parse(xml, locals = {})
+  def parse(xml, options = {})
     defaults = { :parser => parser }
-    Nori.new.parse xml, defaults.merge(locals)
+    Nori.new(defaults.merge(options)).parse(xml)
   end
 
 end

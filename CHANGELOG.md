@@ -7,12 +7,11 @@ Please make sure to read the updated README for how to use the new version.
   for overall simplicity.
 
 * Refactoring: Changed the interface to remove any global state. The global configuration
-  is gone and split up between initializing a new `Nori` instance and passing the xml to
-  the new `#parse` method.
+  is gone and replaced with simple options to be passed to `Nori.new`.
 
     ``` ruby
     parser = Nori.new(strip_namespaces: true)
-    parser.parse(xml, parser: :nokogiri)
+    parser.parse(xml)
     ```
 
 * Refactoring: Removed the `Nori::Parser` module methods. After refactoring the rest,

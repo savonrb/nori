@@ -1,4 +1,4 @@
-# 2.0 (UPCOMING)
+# 2.0 (2012-12-12)
 
 Please make sure to read the updated README for how to use the new version.
 

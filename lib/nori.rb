@@ -11,7 +11,7 @@ class Nori
       :strip_namespaces     => false,
       :convert_tags_to      => nil,
       :advanced_typecasting => true,
-      :parser               => :rexml
+      :parser               => :nokogiri
     }
 
     validate_options! defaults.keys, options.keys

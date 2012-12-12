@@ -68,11 +68,11 @@ describe Nori do
       hash["value"].should == true
     end
 
-    it "defaults to use the REXML parser" do
+    it "defaults to use the Nokogiri parser" do
       # parsers are loaded lazily by default
-      require "nori/parser/rexml"
+      require "nori/parser/nokogiri"
 
-      Nori::Parser::REXML.should_receive(:parse)
+      Nori::Parser::Nokogiri.should_receive(:parse).once
       nori.parse("<any>thing</any>")
     end
   end
@@ -85,12 +85,12 @@ describe Nori do
   end
 
   context "#parse with :parser" do
-    it "can be configured to use the Nokogiri parser" do
+    it "can be configured to use the REXML parser" do
       # parsers are loaded lazily by default
-      require "nori/parser/nokogiri"
+      require "nori/parser/rexml"
 
-      Nori::Parser::Nokogiri.should_receive(:parse)
-      nori(:parser => :nokogiri).parse("<any>thing</any>")
+      Nori::Parser::REXML.should_receive(:parse).once
+      nori(:parser => :rexml).parse("<any>thing</any>")
     end
   end
 

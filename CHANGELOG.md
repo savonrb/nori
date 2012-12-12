@@ -2,6 +2,8 @@
 
 Please make sure to read the updated README for how to use the new version.
 
+* Change: Nori now defaults to use the Nokogiri parser.
+
 * Refactoring: Changed the `Nori` module to a class. This might cause problems if you
   included the `Nori` module somewhere in your application. This use case was removed
   for overall simplicity.

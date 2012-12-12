@@ -35,8 +35,6 @@ class Nori
       end
 
       def self.parse(xml, options)
-        return {} if xml.strip.empty?
-
         document = Document.new
         document.options = options
         parser = ::Nokogiri::XML::SAX::Parser.new document

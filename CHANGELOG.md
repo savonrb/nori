@@ -19,6 +19,8 @@ Please make sure to read the updated README for how to use the new version.
 * Refactoring: Removed the `Nori::Parser` module methods. After refactoring the rest,
   there was only a single method left for this module and that was moved to `Nori`.
 
+* Fix: [#16](https://github.com/savonrb/nori/issues/16) strip XML passed to Nori.
+
 ## 1.1.3 (2012-07-12)
 
 * Fix: Merged [pull request 21](https://github.com/savonrb/nori/pull/21) to fix an

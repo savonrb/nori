@@ -75,6 +75,13 @@ describe Nori do
       Nori::Parser::Nokogiri.should_receive(:parse).once
       nori.parse("<any>thing</any>")
     end
+
+    it "strips the XML" do
+      xml = double("xml")
+      xml.should_receive(:strip).and_return("<any>thing</any>")
+
+      nori.parse(xml).should == { "any" => "thing" }
+    end
   end
 
   context "#parse without :advanced_typecasting" do

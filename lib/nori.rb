@@ -19,8 +19,11 @@ class Nori
   end
 
   def parse(xml)
+    cleaned_xml = xml.strip
+    return {} if cleaned_xml.empty?
+
     parser = load_parser @options[:parser]
-    parser.parse(xml, @options)
+    parser.parse(cleaned_xml, @options)
   end
 
   private

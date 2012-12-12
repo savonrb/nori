@@ -301,6 +301,20 @@ describe Nori do
           parse(xml).should have_key("Envelope")
         end
 
+        it "strips namespaces from attributes" do
+          xml = <<-XML
+            <m:GetStock xmlns:m="http://www.example.org/stock">
+              <m:Stock m:company="International Business Machines"><m:name>IBM</m:name></m:Stock>
+            </m:GetStock>
+          XML
+
+          expected_stock_hash = { "Stock" => { "name" => "IBM",
+                                         "@company" => "International Business Machines"},
+                            "@m"=>"http://www.example.org/stock" }
+
+          parse(xml)['GetStock'].should == expected_stock_hash
+        end
+
         it "converts namespaced entries to array elements" do
           xml = <<-XML
             <history
@@ -313,6 +327,22 @@ describe Nori do
 
           expected_case = [{ "name" => "a_name" }, { "name" => "another_name" }]
           parse(xml)["history"]["case"].should == expected_case
+        end
+      end
+
+      context "with convert_attributes_to set to a custom formula" do
+        around do |example|
+          Nori.convert_attributes_to { |key, value| ["#{key}_k", "#{value}_v"] }
+          example.run
+          Nori.convert_attributes_to(nil)
+        end
+
+        it "alters attributes and values" do
+          xml = <<-XML
+            <user name="value"><age>21</age></user>
+          XML
+
+          parse(xml).should == {'user' => {'@name_k' => 'value_v', 'age' => '21'}}
         end
       end
 

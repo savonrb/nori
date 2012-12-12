@@ -40,6 +40,24 @@ module Nori
     @strip_namespaces
   end
 
+  # Expects a +block+ which receives an attribute key and value to convert.
+  # Accepts +nil+ for a reset to the default behavior of not converting
+  # attributes.
+  def convert_attributes_to(reset = nil, &block)
+    @convert_attribute = reset || block
+  end
+
+  # Transforms a given +attribute+ key and value using the specified conversion
+  # formula.
+  def convert_attribute(key, value)
+    @convert_attribute.call(key, value)
+  end
+
+  # Returns whether to convert attributes.
+  def convert_attributes?
+    @convert_attribute
+  end
+
   # Expects a +block+ which receives a tag to convert.
   # Accepts +nil+ for a reset to the default behavior of not converting tags.
   def convert_tags_to(reset = nil, &block)

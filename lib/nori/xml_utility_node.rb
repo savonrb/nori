@@ -87,12 +87,14 @@ module Nori
     def initialize(nori, name, normalized_attributes = {})
       # unnormalize attribute values
       attributes = Hash[* normalized_attributes.map do |key, value|
+        key, value = Nori.convert_attribute(key, value) if Nori.convert_attributes?
+        key = strip_namespace(key) if Nori.strip_namespaces?
         [ key, unnormalize_xml_entities(value) ]
       end.flatten]
 
       @nori = nori
       @name = name.tr("-", "_")
-      @name = @name.split(":").last if @nori.strip_namespaces?
+      @name = strip_namespace(@name) if @nori.strip_namespaces?
       @name = @nori.convert_tag(@name) if @nori.convert_tags?
 
       # leave the type alone if we don't know what it is
@@ -254,6 +256,10 @@ module Nori
     # TODO: replace REXML
     def unnormalize_xml_entities value
       REXML::Text.unnormalize(value)
+    end
+
+    def strip_namespace(string)
+      string.split(":").last
     end
 
     def try_to_convert(value, &block)

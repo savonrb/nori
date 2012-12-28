@@ -1,4 +1,17 @@
-# 2.0 (2012-12-12)
+# 2.0.1 (UPCOMING)
+
+* Fix: [#29](https://github.com/savonrb/nori/issues/29) Nori now properly parses XML
+  documents with multiple top-level nodes with both its REXML and Nokogiri parser.
+
+  Previously, REXML placed the content from anything other than the first "root node"
+  inside the first root node. Nokogiri only parsed the first root node and silently
+  ignored the rest.
+
+  Releasing this as a bug fix might be controversial, but since Nori 2.0 changes the
+  default parser to Nokogiri, it broke behavior from 1.x. Also, both parsers return
+  unexpected results and multiple top-level nodes should be an exception anyway.
+
+# 2.0.0 (2012-12-12)
 
 Please make sure to read the updated README for how to use the new version.
 

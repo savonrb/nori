@@ -22,8 +22,15 @@ class Nori
     cleaned_xml = xml.strip
     return {} if cleaned_xml.empty?
 
+    # this is to ensure both rexml and nokogiri return the same
+    # result for xml documents with multiple top-level nodes.
+    wrapped_xml = "<norirootnode>#{cleaned_xml}</norirootnode>"
+
     parser = load_parser @options[:parser]
-    parser.parse(cleaned_xml, @options)
+    hash = parser.parse(wrapped_xml, @options)
+
+    # remove the wrapper node and just return the actual content.
+    hash.values.first
   end
 
   private

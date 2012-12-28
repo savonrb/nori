@@ -72,7 +72,7 @@ describe Nori do
       # parsers are loaded lazily by default
       require "nori/parser/nokogiri"
 
-      Nori::Parser::Nokogiri.should_receive(:parse).once
+      Nori::Parser::Nokogiri.should_receive(:parse).and_return({})
       nori.parse("<any>thing</any>")
     end
 
@@ -96,7 +96,7 @@ describe Nori do
       # parsers are loaded lazily by default
       require "nori/parser/rexml"
 
-      Nori::Parser::REXML.should_receive(:parse).once
+      Nori::Parser::REXML.should_receive(:parse).and_return({})
       nori(:parser => :rexml).parse("<any>thing</any>")
     end
   end

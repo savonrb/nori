@@ -86,6 +86,25 @@ describe Nori do
         parse(xml)["multiRef"].should == { "login" => "grep", "@id" => "id1", "id" => "76737" }
       end
 
+      it "should correctly parse xml with multiple root nodes" do
+        xml = <<-XML
+          <request>
+            <entities href="#id1">
+            </entities>
+          </request>
+          <entity id="id1">
+            <foo><bar>1</bar></foo>
+            <sub href="#id2" />
+          </entity>
+          <ololo id="id2">
+            <foo>1</foo>
+          </ololo>
+        XML
+
+        hash = parse(xml)
+        hash.keys.should == ["request", "entity", "ololo"]
+      end
+
       context "without advanced typecasting" do
         it "should not transform 'true'" do
           hash = parse("<value>true</value>", :advanced_typecasting => false)

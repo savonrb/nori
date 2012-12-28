@@ -1,4 +1,4 @@
-# 2.0.1 (UPCOMING)
+# 2.0.1 (2012-12-28)
 
 * Fix: [#29](https://github.com/savonrb/nori/issues/29) Nori now properly parses XML
   documents with multiple top-level nodes with both its REXML and Nokogiri parser.

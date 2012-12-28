@@ -102,7 +102,9 @@ describe Nori do
         XML
 
         hash = parse(xml)
-        hash.keys.should == ["request", "entity", "ololo"]
+
+        hash.should have(3).keys
+        hash.should include("request", "entity", "ololo")
       end
 
       context "without advanced typecasting" do

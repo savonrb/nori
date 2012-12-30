@@ -19,7 +19,8 @@ class Nori
   end
 
   def parse(xml)
-    cleaned_xml = xml.strip
+    # strip and remove instruction tag
+    cleaned_xml = xml.strip.gsub(/^\<\?xml(.*)\?\>/, "")
     return {} if cleaned_xml.empty?
 
     # this is to ensure both rexml and nokogiri return the same

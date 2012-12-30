@@ -86,8 +86,24 @@ describe Nori do
         parse(xml)["multiRef"].should == { "login" => "grep", "@id" => "id1", "id" => "76737" }
       end
 
+      it "should correctly parse xml when instruction tag is present" do
+        xml = <<-XML
+          <?xml version='1.0' encoding='UTF-8'?>
+          <startup>
+            <name>Intrans</name>
+            <location>San Francisco</location>
+          </startup>
+        XML
+
+        hash = parse xml
+
+        hash.has_key?('startup').should be_true
+        hash['startup'].keys.count.should == 2
+      end
+
       it "should correctly parse xml with multiple root nodes" do
         xml = <<-XML
+          <?xml version='1.0' encoding='UTF-8'?>
           <request>
             <entities href="#id1">
             </entities>

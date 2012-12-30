@@ -24,7 +24,8 @@ class Nori
 
     # this is to ensure both rexml and nokogiri return the same
     # result for xml documents with multiple top-level nodes.
-    wrapped_xml = "<norirootnode>#{cleaned_xml}</norirootnode>"
+    instruction = /^\<\?(.*)\?\>/.match cleaned_xml
+    wrapped_xml = "#{instruction}<norirootnode>#{cleaned_xml.gsub(/^\<\?(.*)\?\>/, '')}</norirootnode>"
 
     parser = load_parser @options[:parser]
     hash = parser.parse(wrapped_xml, @options)

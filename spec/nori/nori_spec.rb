@@ -367,7 +367,8 @@ describe Nori do
           'approved'   => nil,
           'written_on' => nil,
           'viewed_at'  => nil,
-          'content'    => nil,
+          # don't execute arbitary YAML code
+          'content'    => { "@type" => "yaml" },
           'parent_id'  => nil,
           'nil_true'   => nil,
           'namespaced' => nil
@@ -407,12 +408,13 @@ describe Nori do
           # Changed this line where the key is :message.  The yaml specifies this as a symbol, and who am I to change what you specify
           # The line in ActiveSupport is
           # 'content' => { 'message' => "Have a nice day", 1 => "should be an integer", "array" => [{ "should-have-dashes" => true, "should_have_underscores" => true }] },
-          'content' => { :message => "Have a nice day", 1 => "should be an integer", "array" => [{ "should-have-dashes" => true, "should_have_underscores" => true }] },
+          'content' => "--- \n1: should be an integer\n:message: Have a nice day\narray: \n- should-have-dashes: true\n  should_have_underscores: true\n",
           'author_email_address' => "david@loudthinking.com",
           'parent_id' => nil,
           'ad_revenue' => BigDecimal("1.50"),
           'optimum_viewing_angle' => 135.0,
-          'resident' => :yes
+          # don't create symbols from arbitary remote code
+          'resident' => "yes"
         }
 
         parse(topic_xml)["topic"].each do |k,v|

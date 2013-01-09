@@ -1,3 +1,9 @@
+# 2.0.2 (2013-01-09)
+
+* Fix for remote code execution bug. For more in-depth information, read about the
+  recent [Rails hotfix](https://groups.google.com/forum/?fromgroups=#!topic/rubyonrails-security/61bkgvnSGTQ).
+  Please make sure to upgrade now!
+
 # 2.0.1 (2012-12-28)
 
 * Fix: [#29](https://github.com/savonrb/nori/issues/29) Nori now properly parses XML
@@ -113,7 +119,7 @@ Please make sure to read the updated README for how to use the new version.
 
 ## 0.2.1 (2011-05-15)
 
-* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.  
+* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.
   This avoids problems with attributes and child nodes having the same name.
 
       <multiRef id="id1">

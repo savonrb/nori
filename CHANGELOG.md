@@ -1,3 +1,9 @@
+## master
+
+* Fix for remote code execution bug. For more in-depth information, read about the
+  recent [Rails hotfix](https://groups.google.com/forum/?fromgroups=#!topic/rubyonrails-security/61bkgvnSGTQ).
+  Please make sure to upgrade now!
+
 ## 1.1.3 (2012-07-12)
 
 * Fix: Merged [pull request 21](https://github.com/rubiii/nori/pull/21) to fix an
@@ -77,7 +83,7 @@
 
 ## 0.2.1 (2011-05-15)
 
-* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.  
+* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.
   This avoids problems with attributes and child nodes having the same name.
 
       <multiRef id="id1">

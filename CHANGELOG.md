@@ -1,3 +1,9 @@
+== master
+
+* Fix for remote code execution bug. For more in-depth information, read about the
+  recent [Rails hotfix](https://groups.google.com/forum/?fromgroups=#!topic/rubyonrails-security/61bkgvnSGTQ).
+  Please make sure to upgrade now!
+
 == 1.0.2 (2011-07-04)
 
 * Fix: When specifying a custom formula to convert tags, XML attributes were ignored.
@@ -54,7 +60,7 @@
 
 == 0.2.1 (2011-05-15)
 
-* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.  
+* Fix: Changed XML attributes converted to Hash keys to be prefixed with an @-sign.
   This avoids problems with attributes and child nodes having the same name.
 
       <multiRef id="id1">

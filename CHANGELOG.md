@@ -1,4 +1,4 @@
-## master
+## 1.1.4 (2013-01-10)
 
 * Fix for remote code execution bug. For more in-depth information, read about the
   recent [Rails hotfix](https://groups.google.com/forum/?fromgroups=#!topic/rubyonrails-security/61bkgvnSGTQ).

@@ -56,7 +56,7 @@ Nori lets you specify a custom formula to convert XML tags to Hash keys.
 Let me give you an example:
 
 ``` ruby
-parser = Nori.new(:convert_tags_to => lambda { |tag| tag.snake_case.to_sym })
+parser = Nori.new(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
 
 xml = '<userResponse><accountStatus>active</accountStatus></userResponse>'
 parser.parse(xml)  # => { :user_response => { :account_status => "active" }

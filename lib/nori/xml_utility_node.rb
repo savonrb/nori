@@ -1,4 +1,5 @@
 require "rexml/text"
+require "rexml/document"
 require "date"
 require "time"
 require "yaml"

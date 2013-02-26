@@ -7,6 +7,11 @@ describe Nori do
 
       let(:parser) { parser }
 
+      it "should work with unnormalized characters" do
+        xml = '<root>&amp;</root>'
+        parse(xml).should == { 'root' => "&" }
+      end
+
       it "should transform a simple tag with content" do
         xml = "<tag>This is the contents</tag>"
         parse(xml).should == { 'tag' => 'This is the contents' }

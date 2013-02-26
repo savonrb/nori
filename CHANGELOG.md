@@ -1,3 +1,7 @@
+# 2.0.4 (2013-02-26)
+
+* Fix: [#37](https://github.com/savonrb/nori/issues/37) special characters
+  problem on Ruby 1.9.3-p392.
 
 # 2.0.3 (2013-01-10)
 

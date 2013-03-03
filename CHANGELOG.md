@@ -1,3 +1,8 @@
+## 1.1.5 (2013-03-03)
+
+* Fix: [#37](https://github.com/savonrb/nori/issues/37) special characters
+  problem on Ruby 1.9.3-p392.
+
 ## 1.1.4 (2013-01-10)
 
 * Fix for remote code execution bug. For more in-depth information, read about the

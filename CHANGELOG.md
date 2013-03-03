@@ -40,6 +40,17 @@ Please make sure to read the updated README for how to use the new version.
 
 * Fix: [#16](https://github.com/savonrb/nori/issues/16) strip XML passed to Nori.
 
+## 1.1.5 (2013-03-03)
+
+* Fix: [#37](https://github.com/savonrb/nori/issues/37) special characters
+  problem on Ruby 1.9.3-p392.
+
+## 1.1.4 (2013-01-10)
+
+* Fix for remote code execution bug. For more in-depth information, read about the
+  recent [Rails hotfix](https://groups.google.com/forum/?fromgroups=#!topic/rubyonrails-security/61bkgvnSGTQ).
+  Please make sure to upgrade now!
+
 ## 1.1.3 (2012-07-12)
 
 * Fix: Merged [pull request 21](https://github.com/savonrb/nori/pull/21) to fix an

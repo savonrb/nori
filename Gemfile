@@ -1,4 +1,2 @@
-source :rubygems
-
-# Specify your gem's dependencies in nori.gemspec
+source 'https://rubygems.org'
 gemspec

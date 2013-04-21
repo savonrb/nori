@@ -90,9 +90,7 @@ class Nori
       end.flatten]
 
       @options = options
-      @name    = name.tr("-", "_")
-      @name    = @name.split(":").last if @options[:strip_namespaces]
-      @name    = @options[:convert_tags_to].call(@name) if @options[:convert_tags_to].respond_to? :call
+      @name = Nori.hash_key(name, options)
 
       # leave the type alone if we don't know what it is
       @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]

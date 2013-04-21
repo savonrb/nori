@@ -62,6 +62,31 @@ describe Nori do
     end
   end
 
+	context '#find' do
+		before do
+      upcase = lambda { |tag| tag.upcase }
+			@nori = nori(:convert_tags_to => upcase)
+
+      xml = '<userResponse id="1"><accountStatus>active</accountStatus></userResponse>'
+			@hash = @nori.parse(xml)
+		end
+
+		it 'returns the Hash when the path is empty' do
+			result = @nori.find(@hash)
+			expect(result).to eq("USERRESPONSE" => { "ACCOUNTSTATUS" => "active", "@ID" => "1" })
+		end
+
+		it 'returns the result for a single key' do
+			result = @nori.find(@hash, 'userResponse')
+			expect(result).to eq("ACCOUNTSTATUS" => "active", "@ID" => "1")
+		end
+
+		it 'returns the result for nested keys' do
+			result = @nori.find(@hash, 'userResponse', 'accountStatus')
+			expect(result).to eq("active")
+		end
+	end
+
   context "#parse" do
     it "defaults to use advanced typecasting" do
       hash = nori.parse("<value>true</value>")

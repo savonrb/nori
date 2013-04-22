@@ -101,6 +101,28 @@ describe Nori do
     end
   end
 
+  context "#parse without :delete_namespace_attributes" do
+    it "can be changed to not delete namespace attributes" do
+      xml = '<userResponse xmlns="http://schema.company.com/some/path/to/namespace/v1"><accountStatus>active</accountStatus></userResponse>'
+      hash = nori(:delete_namespace_attributes => false).parse(xml)
+      hash.should == {"userResponse" => {"@xmlns" => "http://schema.company.com/some/path/to/namespace/v1", "accountStatus" => "active"}}
+    end
+  end
+
+  context "#parse with :delete_namespace_attributes" do
+    it "can be changed to delete xmlns namespace attributes" do
+      xml = '<userResponse xmlns="http://schema.company.com/some/path/to/namespace/v1"><accountStatus>active</accountStatus></userResponse>'
+      hash = nori(:delete_namespace_attributes => true).parse(xml)
+      hash.should == {"userResponse" => {"accountStatus" => "active"}}
+    end
+
+    it "can be changed to delete xsi namespace attributes" do
+      xml = '<userResponse xsi="abs:myType"><accountStatus>active</accountStatus></userResponse>'
+      hash = nori(:delete_namespace_attributes => true).parse(xml)
+      hash.should == {"userResponse" => {"accountStatus" => "active"}}
+    end
+  end
+
   def nori(options = {})
     Nori.new(options)
   end

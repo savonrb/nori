@@ -5,3 +5,4 @@ coverage
 *.gem
 .bundle
 Gemfile.lock
+/.idea

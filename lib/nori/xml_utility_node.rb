@@ -101,6 +101,7 @@ class Nori
           @nil_element = attributes.delete(key) == "true"
           attributes.delete("xmlns:#{result[2]}") if result[1]
         end
+        attributes.delete(key) if @options[:delete_namespace_attributes] && key[/^(xmlns|xsi)/]
       end
       @attributes = undasherize_keys(attributes)
       @children = []

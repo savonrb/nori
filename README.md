@@ -12,10 +12,10 @@ parser.parse("<tag>This is the contents</tag>")
 ```
 
 Nori supports pluggable parsers and ships with both REXML and Nokogiri implementations.  
-It defaults to REXML, but you can change it to use Nokogiri via:
+It defaults to Nokogiri since v2.0.0, but you can change it to use REXML via:
 
 ``` ruby
-Nori.new(:parser => :nokogiri)  # or :rexml
+Nori.new(:parser => :rexml)  # or :nokogiri
 ```
 
 Make sure Nokogiri is in your LOAD_PATH when parsing XML, because Nori tries to load it  

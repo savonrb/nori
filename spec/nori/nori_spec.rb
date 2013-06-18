@@ -7,6 +7,57 @@ describe Nori do
 
       let(:parser) { parser }
 
+      context "when parsing times" do
+        let(:time_in_utc) { Time.new(2013,06,01,11,00,01, '+00:00') }
+
+        context "when timezone is given" do
+          it "it respects notation +01:00" do
+            xml = '<time type="datetime">2013-06-01 12:00:01 +01:00</time>'
+            parse(xml).should == { 'time' => time_in_utc }
+          end
+
+          it "it respects notation +0100" do
+            xml = '<time type="datetime">2013-06-01 12:00:01 +0100</time>'
+            parse(xml).should == { 'time' => time_in_utc }
+          end
+
+          it "it respects notation +01" do
+            xml = '<time type="datetime">2013-06-01 12:00:01 +01</time>'
+            parse(xml).should == { 'time' => time_in_utc }
+          end
+
+          it "it respects notation -01" do
+            xml = '<time type="datetime">2013-06-01 10:00:01 -01</time>'
+            parse(xml).should == { 'time' => time_in_utc }
+          end
+
+          it "it respects notation Z" do
+            xml = '<time type="datetime">2013-06-01 11:00:01Z</time>'
+            parse(xml).should == { 'time' => time_in_utc }
+          end
+        end
+
+        context "when timezone is not given" do
+          before(:each) { ENV['TZ'] = 'Europe/Minsk' } # its +03:00, no DST :)
+          it "treats the input as local time" do
+            xml = '<time type="datetime">2013-06-01 14:00:01</time>'
+            parse(xml).should == { 'time' => time_in_utc }
+          end
+
+          it "accepts passing timezone via options" do
+            xml = '<time type="datetime">2013-06-01 14:00:01</time>'
+            Nori.new(time_zone: 'Asia/Dushanbe')
+            ENV['TZ'].should == 'Asia/Dushanbe'
+          end
+
+          it "treats unknown timezone as UTC" do
+            xml = '<time type="datetime">2013-06-01 11:00:01</time>'
+            Nori.new(time_zone: 'Incorrect Timezone').parse(xml)
+            parse(xml).should == { 'time' => time_in_utc.utc }
+          end
+        end
+      end
+
       it "should work with unnormalized characters" do
         xml = '<root>&amp;</root>'
         parse(xml).should == { 'root' => "&" }

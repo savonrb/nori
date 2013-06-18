@@ -1,6 +1,7 @@
 require "nori/version"
 require "nori/core_ext"
 require "nori/xml_utility_node"
+require "facets/date"
 
 class Nori
 
@@ -19,11 +20,14 @@ class Nori
       :delete_namespace_attributes  => false,
       :convert_tags_to              => nil,
       :advanced_typecasting         => true,
-      :parser                       => :nokogiri
+      :parser                       => :nokogiri,
+      :time_zone                    => nil
     }
 
     validate_options! defaults.keys, options.keys
     @options = defaults.merge(options)
+
+    update_timezone(@options.delete(:time_zone))
   end
 
   def find(hash, *path)
@@ -45,6 +49,10 @@ class Nori
   end
 
   private
+
+  def update_timezone(tz)
+    tz ? ENV['TZ'] = tz : false
+  end
 
   def load_parser(parser)
     require "nori/parser/#{parser}"

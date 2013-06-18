@@ -72,9 +72,9 @@ class Nori
     self.typecasts = {}
     self.typecasts["integer"]       = lambda { |v| v.nil? ? nil : v.to_i }
     self.typecasts["boolean"]       = lambda { |v| v.nil? ? nil : (v.strip != "false") }
-    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
+    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : parse_time(v) }
     self.typecasts["date"]          = lambda { |v| v.nil? ? nil : Date.parse(v) }
-    self.typecasts["dateTime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
+    self.typecasts["dateTime"]      = lambda { |v| v.nil? ? nil : parse_time(v) }
     self.typecasts["decimal"]       = lambda { |v| v.nil? ? nil : BigDecimal(v.to_s) }
     self.typecasts["double"]        = lambda { |v| v.nil? ? nil : v.to_f }
     self.typecasts["float"]         = lambda { |v| v.nil? ? nil : v.to_f }
@@ -249,6 +249,15 @@ class Nori
     alias to_s to_html
 
   private
+
+    def self.parse_time(input)
+      if (input =~ /(((\+|\-)\d\d(:)?(\d\d)?)|Z)\Z/)
+        input.to_time
+      else
+        input.to_time(:local)
+      end
+    end
+    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
 
     # TODO: replace REXML
     def unnormalize_xml_entities value

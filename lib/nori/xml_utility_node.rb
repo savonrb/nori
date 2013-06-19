@@ -1,5 +1,3 @@
-require "rexml/text"
-require "rexml/document"
 require "date"
 require "time"
 require "yaml"
@@ -83,12 +81,7 @@ class Nori
 
     self.available_typecasts = self.typecasts.keys
 
-    def initialize(options, name, normalized_attributes = {})
-      # unnormalize attribute values
-      attributes = Hash[* normalized_attributes.map do |key, value|
-        [ key, unnormalize_xml_entities(value) ]
-      end.flatten]
-
+    def initialize(options, name, attributes = {})
       @options = options
       @name = Nori.hash_key(name, options)
 
@@ -136,7 +129,7 @@ class Nori
       end
 
       if @text
-        t = typecast_value unnormalize_xml_entities(inner_html)
+        t = typecast_value(inner_html)
         t = advanced_typecasting(t) if t.is_a?(String) && @options[:advanced_typecasting]
 
         if t.is_a?(String)
@@ -249,11 +242,6 @@ class Nori
     alias to_s to_html
 
   private
-
-    # TODO: replace REXML
-    def unnormalize_xml_entities value
-      REXML::Text.unnormalize(value)
-    end
 
     def try_to_convert(value, &block)
       block.call(value)

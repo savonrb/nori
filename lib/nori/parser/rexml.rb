@@ -1,4 +1,6 @@
 require "rexml/parsers/baseparser"
+require "rexml/text"
+require "rexml/document"
 
 class Nori
   module Parser
@@ -13,7 +15,7 @@ class Nori
         parser = ::REXML::Parsers::BaseParser.new(xml)
 
         while true
-          event = parser.pull
+          event = unnormalize(parser.pull)
           case event[0]
           when :end_document
             break
@@ -32,7 +34,18 @@ class Nori
         end
         stack.length > 0 ? stack.pop.to_hash : {}
       end
-    end
 
+      def self.unnormalize(event)
+        event.map! do |el|
+          if el.is_a?(String)
+            ::REXML::Text.unnormalize(el)
+          elsif el.is_a?(Hash)
+            el.each {|k,v| el[k] = ::REXML::Text.unnormalize(v)}
+          else
+            el
+          end
+        end
+      end
+    end
   end
 end

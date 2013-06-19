@@ -257,7 +257,6 @@ class Nori
         input.to_time(:local)
       end
     end
-    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
 
     # TODO: replace REXML
     def unnormalize_xml_entities value

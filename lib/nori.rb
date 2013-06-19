@@ -51,7 +51,7 @@ class Nori
   private
 
   def update_timezone(tz)
-    tz ? ENV['TZ'] = tz : false
+    ENV['TZ'] = tz if tz
   end
 
   def load_parser(parser)

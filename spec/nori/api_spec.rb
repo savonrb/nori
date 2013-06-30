@@ -85,6 +85,14 @@ describe Nori do
 			result = @nori.find(@hash, 'userResponse', 'accountStatus')
 			expect(result).to eq("active")
 		end
+
+		it 'strips the namespaces from Hash keys' do
+			xml = '<v1:userResponse xmlns:v1="http://example.com"><v1:accountStatus>active</v1:accountStatus></v1:userResponse>'
+			hash = @nori.parse(xml)
+
+			result = @nori.find(hash, 'userResponse', 'accountStatus')
+			expect(result).to eq("active")
+		end
 	end
 
   context "#parse" do

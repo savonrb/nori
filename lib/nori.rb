@@ -32,8 +32,8 @@ class Nori
     key = path.shift
     key = self.class.hash_key(key, @options)
 
-    return nil unless hash.include? key
-    find(hash[key], *path)
+    value = find_value(hash, key)
+    find(value, *path) if value
   end
 
   def parse(xml)
@@ -58,6 +58,15 @@ class Nori
       raise ArgumentError, "Spurious options: #{spurious_options.inspect}\n" \
                            "Available options are: #{available_options.inspect}"
     end
+  end
+
+  def find_value(hash, key)
+    hash.each do |k, v|
+      key_without_namespace = k.to_s.split(':').last
+      return v if key_without_namespace == key.to_s
+    end
+
+    nil
   end
 
 end

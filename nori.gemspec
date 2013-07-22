@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.description = s.summary
 
   s.rubyforge_project = "nori"
+  s.license = "MIT"
 
   s.add_development_dependency "rake",     "~> 10.0"
   s.add_development_dependency "nokogiri", ">= 1.4.0", "< 1.6"

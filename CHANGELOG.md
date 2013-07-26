@@ -1,4 +1,4 @@
-# UPCOMING
+# 2.3.0 (2013-07-26)
 
 * Change: `Nori#find` now ignores namespace prefixes in Hash keys it is searching through.
 

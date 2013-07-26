@@ -2,6 +2,8 @@
 
 * Change: `Nori#find` now ignores namespace prefixes in Hash keys it is searching through.
 
+* Fix: Limited Nokogiri to < 1.6, because v1.6 dropped support for Ruby 1.8.
+
 # 2.2.0 (2013-04-25)
 
 * Feature: [#42](https://github.com/savonrb/nori/pull/42) adds the `:delete_namespace_attributes`

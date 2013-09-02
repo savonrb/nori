@@ -16,7 +16,7 @@ class Nori
     end
 
     def conversion(type)
-      if !type.nil? && type_namespace_matches?(type)
+      if !type.nil? && type_namespace_prefix_matches?(type)
         stripped_type = strip_namespace(type)
         @conversions.each_pair do |type_pattern, type_converter|
           if (stripped_type =~ /^#{type_pattern}$/)
@@ -31,8 +31,17 @@ class Nori
       attributes[namespaced_type_attribute]
     end
 
-    def type_namespace_matches?(type)
-      @type_prefix.nil? && type.index(':').nil? || type.index(@type_prefix + ":") == 0
+    def attribute_namespace_prefix_matches?(attribute)
+      TypeConverter.namespace_prefix_matches?(@attribute_prefix, attribute)
+    end
+
+    def type_namespace_prefix_matches?(type)
+      TypeConverter.namespace_prefix_matches?(@type_prefix, type)
+    end
+
+    def self.namespace_prefix_matches?(namespace_prefix, attribute_name)
+      no_prefixed = namespace_prefix.nil? && attribute_name.index(':').nil?
+      no_prefixed || attribute_name.index("#{namespace_prefix}:") == 0
     end
 
     def strip_namespace(type)

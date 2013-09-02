@@ -30,14 +30,23 @@ class Nori
     def clean_attributes(attributes)
       attributes.tap do |a|
         a.keys.each do |key|
-          # TODO check if this is required
-          if result = /^((.*):)?nil$/.match(key)
-            @nil_element = (a.delete(key) == "true")
-            a.delete("xmlns:#{result[2]}") if result[1]
+          delete_niled_attributes(a, key)
+          if @options[:delete_namespace_attributes] &&
+              @options[:type_converter].attribute_namespace_prefix_matches?(key)
+            a.delete(key)
           end
-          a.delete(key) if @options[:delete_namespace_attributes] && key.index(':')
           convert_dashed_key_to_underscore(a, key) if key.index('-')
         end
+      end
+    end
+
+    # TODO - what is it good for ?
+    # The nil attribute can be specified to delete other attributes.
+    # The namespace of the nil attribute is the name of the attribute that should be deleted.
+    def delete_niled_attributes(attributes, key)
+      if result = /^((.*):)?nil$/.match(key)
+        @nil_element = (attributes.delete(key) == "true")
+        attributes.delete("xmlns:#{result[2]}") if result[1]
       end
     end
 

@@ -13,7 +13,7 @@ class Nori
 
   PARSERS = { :rexml => "REXML", :nokogiri => "Nokogiri" }
 
-  DEFAULT_TYPE_CONVERSIONS =  TypeConverter.new(
+  DEFAULT_TYPE_CONVERTER =  TypeConverter.new(
       'int|integer' => TypeConverter::ToInteger,
       'boolean' => TypeConverter::ToBoolean,
       'date[Tt]ime' => TypeConverter::ToTime,
@@ -30,7 +30,7 @@ class Nori
       :delete_namespace_attributes  => false,
       :convert_tags_to              => nil,
       :advanced_typecasting         => true,
-      :type_conversions             => DEFAULT_TYPE_CONVERSIONS,
+      :type_converter               => DEFAULT_TYPE_CONVERTER,
       :parser                       => :nokogiri
     }
 

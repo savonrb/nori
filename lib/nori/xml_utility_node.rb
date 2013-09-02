@@ -64,14 +64,14 @@ class Nori
     end
 
     def type
-      @type ||= @options[:type_conversions].type(attributes)
+      @type ||= @options[:type_converter].type(attributes)
     end
 
     def to_hash
-      conversion = @options[:type_conversions].conversion(type)
+      conversion = @options[:type_converter].conversion(type)
       if conversion
         value = conversion.convert(inner_html)
-        @attributes.delete(@options[:type_conversions].namespaced_type_attribute)
+        @attributes.delete(@options[:type_converter].namespaced_type_attribute)
       else
         if type == 'file'
           value = create_file

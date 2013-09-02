@@ -1,21 +1,18 @@
+require 'rexml/document'
+
 class Nori
   class TypeConverter
-    module XmlNamespace
-      XML_SCHEMA = 'http://www.w3.org/2001/XMLSchema'
-      XML_SCHEMA_INSTANCE = 'http://www.w3.org/2001/XMLSchema-instance'
-    end
-
-    attr_accessor :attribute_namespace, :type_attribute_name, :type_namespace, :conversions
+    attr_accessor :attribute_prefix, :type_attribute_name, :type_prefix, :conversions
 
     def initialize(conversions = {})
-      @attribute_namespace = nil
+      @attribute_prefix = nil
       @type_attribute_name = 'type'
-      @type_namespace = nil
+      @type_prefix = nil
       @conversions = conversions
     end
 
     def namespaced_type_attribute
-      @namespaced_type_attribute ||= @attribute_namespace.nil? ? @type_attribute_name : "#{@attribute_namespace}:#{@type_attribute_name}"
+      @namespaced_type_attribute ||= @attribute_prefix.nil? ? @type_attribute_name : "#{@attribute_prefix}:#{@type_attribute_name}"
     end
 
     def conversion(type)
@@ -35,13 +32,26 @@ class Nori
     end
 
     def type_namespace_matches?(type)
-      @type_namespace.nil? && type.index(':').nil? || type.index(@type_namespace + ":") == 0
+      @type_prefix.nil? && type.index(':').nil? || type.index(@type_prefix + ":") == 0
     end
 
     def strip_namespace(type)
-      @type_namespace.nil? ? type : type.gsub(/^#{@type_namespace}:/, '')
+      @type_prefix.nil? ? type : type.gsub(/^#{@type_prefix}:/, '')
     end
 
+    def detect_namespace_prefixes!(xml, opts = {})
+      document = REXML::Document.new(xml)
+      namespaces = REXML::XPath.first(document.root).namespaces
+      @attribute_prefix = namespaces.key(opts[:attribute_namespace] || XmlNamespace::XML_SCHEMA_INSTANCE)
+      @type_prefix = namespaces.key(opts[:type_namespace] || XmlNamespace::XML_SCHEMA)
+    end
+
+    module XmlNamespace
+      XML_SCHEMA = 'http://www.w3.org/2001/XMLSchema'
+      XML_SCHEMA_INSTANCE = 'http://www.w3.org/2001/XMLSchema-instance'
+    end
+
+    # -- Type Converter
 
     class NoConvert
       def self.convert(value)

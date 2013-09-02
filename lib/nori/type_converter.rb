@@ -40,8 +40,11 @@ class Nori
     end
 
     def self.namespace_prefix_matches?(namespace_prefix, attribute_name)
-      no_prefixed = namespace_prefix.nil? && attribute_name.index(':').nil?
-      no_prefixed || attribute_name.index("#{namespace_prefix}:") == 0
+      if namespace_prefix.nil? || namespace_prefix.empty?
+        return attribute_name.index(':').nil?
+      else
+        return attribute_name.index("#{namespace_prefix}:") == 0
+      end
     end
 
     def strip_namespace(type)

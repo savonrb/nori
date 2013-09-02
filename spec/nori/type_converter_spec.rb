@@ -69,4 +69,17 @@ describe Nori::TypeConverter do
       end
     end
   end
+
+  describe ".namespace_prefix_matches?" do
+    subject { Nori::TypeConverter }
+
+    specify { subject.namespace_prefix_matches?('foo', 'foo:bar').should be_true }
+    specify { subject.namespace_prefix_matches?('', 'bar').should be_true }
+    specify { subject.namespace_prefix_matches?(nil, 'bar').should be_true }
+    specify { subject.namespace_prefix_matches?('foo', 'foo:bar').should be_true }
+
+    specify { subject.namespace_prefix_matches?('foo', ':bar').should be_false }
+    specify { subject.namespace_prefix_matches?('foo', 'bar').should be_false }
+    specify { subject.namespace_prefix_matches?(nil, ':bar').should be_false }
+  end
 end

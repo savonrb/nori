@@ -40,10 +40,12 @@ class Nori
     end
 
     def detect_namespace_prefixes!(xml, opts = {})
-      document = REXML::Document.new(xml)
-      namespaces = REXML::XPath.first(document.root).namespaces
-      @attribute_prefix = namespaces.key(opts[:attribute_namespace] || XmlNamespace::XML_SCHEMA_INSTANCE)
-      @type_prefix = namespaces.key(opts[:type_namespace] || XmlNamespace::XML_SCHEMA)
+      root_node = REXML::Document.new(xml).root
+      if root_node
+        namespaces = root_node.namespaces
+        @attribute_prefix = namespaces.key(opts[:attribute_namespace] || XmlNamespace::XML_SCHEMA_INSTANCE)
+        @type_prefix = namespaces.key(opts[:type_namespace] || XmlNamespace::XML_SCHEMA)
+      end
     end
 
     module XmlNamespace

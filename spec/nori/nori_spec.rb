@@ -618,7 +618,6 @@ describe Nori do
       it "handle an xml string containing a single space" do
         parse(' ').should == {}
       end
-
     end
   end
 
@@ -626,5 +625,4 @@ describe Nori do
     defaults = { :parser => parser }
     Nori.new(defaults.merge(options)).parse(xml)
   end
-
 end

@@ -17,22 +17,9 @@ class Nori
   # This represents the hard part of the work, all I did was change the
   # underlying parser.
   class XMLUtilityNode
-
-    DEFAULT_TYPE_CONVERSIONS =  TypeConverter.new(
-          'int|integer' => TypeConverter::ToInteger,
-          'boolean' => TypeConverter::ToBoolean,
-          'date[Tt]ime' => TypeConverter::ToTime,
-          'date' => TypeConverter::ToDate,
-          'decimal' => TypeConverter::ToDecimal,
-          'double|float' => TypeConverter::ToFloat,
-          'string' => TypeConverter::ToString,
-          'base64Binary' => TypeConverter::Base64ToBinary
-      )
-
     def initialize(options, name, attributes = {})
       @options = options
       @name = Nori.hash_key(name, options)
-      @type_conversions = options[:type_conversions] || DEFAULT_TYPE_CONVERSIONS
       @nil_element = false
       @attributes = clean_attributes(attributes)
       @child_nodes = []
@@ -77,14 +64,14 @@ class Nori
     end
 
     def type
-      @type ||= @type_conversions.type(attributes)
+      @type ||= @options[:type_conversions].type(attributes)
     end
 
     def to_hash
-      conversion = @type_conversions.conversion(type)
+      conversion = @options[:type_conversions].conversion(type)
       if conversion
         value = conversion.convert(inner_html)
-        @attributes.delete(@type_conversions.namespaced_type_attribute)
+        @attributes.delete(@options[:type_conversions].namespaced_type_attribute)
       else
         if type == 'file'
           value = create_file

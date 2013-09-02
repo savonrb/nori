@@ -19,14 +19,14 @@ class Nori
   class XMLUtilityNode
 
     DEFAULT_TYPE_CONVERSIONS =  TypeConverter.new(
-          'int|integer' => Converter::ToInteger,
-          'boolean' => Converter::ToBoolean,
-          'date[Tt]ime' => Converter::ToTime,
-          'date' => Converter::ToDate,
-          'decimal' => Converter::ToDecimal,
-          'double|float' => Converter::ToFloat,
-          'string' => Converter::ToString,
-          'base64Binary' => Converter::Base64ToBinary
+          'int|integer' => TypeConverter::ToInteger,
+          'boolean' => TypeConverter::ToBoolean,
+          'date[Tt]ime' => TypeConverter::ToTime,
+          'date' => TypeConverter::ToDate,
+          'decimal' => TypeConverter::ToDecimal,
+          'double|float' => TypeConverter::ToFloat,
+          'string' => TypeConverter::ToString,
+          'base64Binary' => TypeConverter::Base64ToBinary
       )
 
     def initialize(options, name, attributes = {})
@@ -92,8 +92,8 @@ class Nori
           value = create_array
         else
           if @text
-            value = (@options[:advanced_typecasting] ? Converter::Autodetect.convert(inner_html) : inner_html)
-            value = (value.is_a?(String) ? StringWithAttributes.new(inner_html, attributes) : value)
+            value = @options[:advanced_typecasting] ? TypeConverter::Autodetect.convert(inner_html) : inner_html
+            value = value.is_a?(String) ? StringWithAttributes.new(inner_html, attributes) : value
           else
             value = create_hash
           end

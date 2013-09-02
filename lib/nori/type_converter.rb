@@ -1,11 +1,10 @@
 class Nori
-
-  module XmlNamespace
-    XML_SCHEMA = 'http://www.w3.org/2001/XMLSchema'
-    XML_SCHEMA_INSTANCE = 'http://www.w3.org/2001/XMLSchema-instance'
-  end
-
   class TypeConverter
+    module XmlNamespace
+      XML_SCHEMA = 'http://www.w3.org/2001/XMLSchema'
+      XML_SCHEMA_INSTANCE = 'http://www.w3.org/2001/XMLSchema-instance'
+    end
+
     attr_accessor :attribute_namespace, :type_attribute_name, :type_namespace, :conversions
 
     def initialize(conversions = {})
@@ -20,7 +19,7 @@ class Nori
     end
 
     def conversion(type)
-      if ! type.nil? && type_namespace_matches?(type)
+      if !type.nil? && type_namespace_matches?(type)
         stripped_type = strip_namespace(type)
         @conversions.each_pair do |type_pattern, type_converter|
           if (stripped_type =~ /^#{type_pattern}$/)
@@ -40,11 +39,9 @@ class Nori
     end
 
     def strip_namespace(type)
-      @type_namespace.nil? ? type :  type.gsub(/^#{@type_namespace}:/, '')
+      @type_namespace.nil? ? type : type.gsub(/^#{@type_namespace}:/, '')
     end
-  end
 
-  module Converter
 
     class NoConvert
       def self.convert(value)
@@ -167,6 +164,5 @@ class Nori
         value
       end
     end
-
   end
 end

@@ -83,3 +83,31 @@ describe Nori::TypeConverter do
     specify { subject.namespace_prefix_matches?(nil, ':bar').should be_false }
   end
 end
+
+### custom conversions
+
+class ToIntRange
+  def self.convert(value)
+    return nil if (value.nil? || value.length == 0)
+    range = value.split('..')
+    return range.first.to_i..range.last.to_i
+  end
+end
+
+describe "type conversions" do
+  describe ToIntRange do
+    let(:xml) {
+      <<-EOT
+          <?xml version="1.0" encoding="UTF-8"?>
+            <officeHours type="interval">8..17</officeHours>
+      EOT
+    }
+
+    it "converts node value to Range of integers" do
+      type_converter = Nori::TypeConverter.new('intRange|integerRange|interval' => ToIntRange)
+      nori = Nori.new(:type_converter => type_converter)
+      parsed = nori.parse(xml)
+      parsed.should eq("officeHours" => 8..17)
+    end
+  end
+end

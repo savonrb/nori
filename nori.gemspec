@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.license = "MIT"
 
   s.add_development_dependency "rake",     "~> 10.0"
-  s.add_development_dependency "nokogiri", ">= 1.4.0", "< 1.6"
+  s.add_development_dependency "nokogiri", ">= 1.4.0"
   s.add_development_dependency "rspec",    "~> 2.12"
 
   s.files         = `git ls-files`.split("\n")

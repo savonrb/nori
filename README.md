@@ -31,18 +31,68 @@ when it's needed.
 Typecasting
 -----------
 
-Besides regular typecasting, Nori features somewhat "advanced" typecasting:
 
-* "true" and "false" String values are converted to `TrueClass` and `FalseClass`.
-* String values matching xs:time, xs:date and xs:dateTime are converted
-  to `Time`, `Date` and `DateTime` objects.
+### Auto-Detection / Advanced Typecasting
 
-You can disable this feature via:
+Nori supports auto detection for text nodes without a defined type,
+beside the regular typecasting mechanism that uses the type attribute for conversion.
+This option is called **:advanced_typecasting** and can currently detect and cast:
+
+* "true" and "false" values
+* XMLSchema types: time, date, dateTime
+
+It is enabled by default and must be disabled explicitly:
 
 ``` ruby
 Nori.new(:advanced_typecasting => false)
 ```
 
+see [Nori::TypeConverter::Autodetect](lib/nori/type_converter.rb)
+
+
+### Custom Type Conversion
+
+Custom types can be converted easily with custom conversions.
+
+E.g to convert a range of integers:
+
+#### XML
+
+``` xml
+<?xml version="1.0" encoding="UTF-8"?>
+  <officeHours type="interval">8..17</officeHours>
+```
+
+#### Custom Conversion Class
+
+```ruby
+class ToIntRange
+  def self.convert(value)
+    return nil if (value.nil? || value.length == 0)
+    range = value.split('..')
+    return range.first.to_i..range.last.to_i
+  end
+end
+
+type_converter = Nori::TypeConverter.new('interval' => ToIntRange)
+nori = Nori.new(:type_converter => type_converter)
+nori.parse(xml)
+```
+
+### Namespace Prefix Detection
+
+**Nori::TypeConverter** does type conversion based on the type attribute.
+By default the namespace prefix for the type attribute and the type value is empty.
+In order to use a non-empty namespace prefix it provides builtin namespace detection for
+**XMLSchema / XMLSchema-instance** namespace:
+
+```ruby
+  xml = request.body.read
+  type_converter = Nori::DEFAULT_TYPE_CONVERTER.tap {|c| c.detect_namespace_prefixes!(xml)}
+  nori = Nori.new(:type_converter => type_converter)
+```
+
+* You can also use custom namespaces - see [TypeConverter spec](spec/nori/type_converter_spec.rb)
 
 Namespaces
 ----------

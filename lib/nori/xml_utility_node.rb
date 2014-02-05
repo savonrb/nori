@@ -5,6 +5,7 @@ require "bigdecimal"
 
 require "nori/string_with_attributes"
 require "nori/string_io_file"
+require "nori/type_converter"
 
 class Nori
 
@@ -16,92 +17,43 @@ class Nori
   # This represents the hard part of the work, all I did was change the
   # underlying parser.
   class XMLUtilityNode
-
-    # Simple xs:time Regexp.
-    # Valid xs:time formats
-    # 13:20:00          1:20 PM
-    # 13:20:30.5555     1:20 PM and 30.5555 seconds
-    # 13:20:00-05:00    1:20 PM, US Eastern Standard Time
-    # 13:20:00+02:00    1:20 PM, Central European Standard Time
-    # 13:20:00Z         1:20 PM, Coordinated Universal Time (UTC)
-    # 00:00:00          midnight
-    # 24:00:00          midnight
-
-    XS_TIME = /^\d{2}:\d{2}:\d{2}[Z\.\-\+]?\d*:?\d*$/
-
-    # Simple xs:date Regexp.
-    # Valid xs:date formats
-    # 2004-04-12           April 12, 2004
-    # -0045-01-01          January 1, 45 BC
-    # 12004-04-12          April 12, 12004
-    # 2004-04-12-05:00     April 12, 2004, US Eastern Standard Time, which is 5 hours behind Coordinated Universal Time (UTC)
-    # 2004-04-12+02:00     April 12, 2004, Central European Summer Time, which is 2 hours ahead of Coordinated Universal Time (UTC)
-    # 2004-04-12Z          April 12, 2004, Coordinated Universal Time (UTC)
-
-    XS_DATE = /^[-]?\d{4}-\d{2}-\d{2}[Z\-\+]?\d*:?\d*$/
-
-    # Simple xs:dateTime Regexp.
-    # Valid xs:dateTime formats
-    # 2004-04-12T13:20:00           1:20 pm on April 12, 2004
-    # 2004-04-12T13:20:15.5         1:20 pm and 15.5 seconds on April 12, 2004
-    # 2004-04-12T13:20:00-05:00     1:20 pm on April 12, 2004, US Eastern Standard Time
-    # 2004-04-12T13:20:00+02:00     1:20 pm on April 12, 2004, Central European Summer Time
-    # 2004-04-12T13:20:15.5-05:00   1:20 pm and 15.5 seconds on April 12, 2004, US Eastern Standard Time
-    # 2004-04-12T13:20:00Z          1:20 pm on April 12, 2004, Coordinated Universal Time (UTC)
-
-    XS_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[\.Z]?\d*[\-\+]?\d*:?\d*$/
-
-    def self.typecasts
-      @@typecasts
-    end
-
-    def self.typecasts=(obj)
-      @@typecasts = obj
-    end
-
-    def self.available_typecasts
-      @@available_typecasts
-    end
-
-    def self.available_typecasts=(obj)
-      @@available_typecasts = obj
-    end
-
-    self.typecasts = {}
-    self.typecasts["integer"]       = lambda { |v| v.nil? ? nil : v.to_i }
-    self.typecasts["boolean"]       = lambda { |v| v.nil? ? nil : (v.strip != "false") }
-    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
-    self.typecasts["date"]          = lambda { |v| v.nil? ? nil : Date.parse(v) }
-    self.typecasts["dateTime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
-    self.typecasts["decimal"]       = lambda { |v| v.nil? ? nil : BigDecimal(v.to_s) }
-    self.typecasts["double"]        = lambda { |v| v.nil? ? nil : v.to_f }
-    self.typecasts["float"]         = lambda { |v| v.nil? ? nil : v.to_f }
-    self.typecasts["string"]        = lambda { |v| v.to_s }
-    self.typecasts["base64Binary"]  = lambda { |v| v.unpack('m').first }
-
-    self.available_typecasts = self.typecasts.keys
-
     def initialize(options, name, attributes = {})
       @options = options
       @name = Nori.hash_key(name, options)
-
-      # leave the type alone if we don't know what it is
-      @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
-
       @nil_element = false
-      attributes.keys.each do |key|
-        if result = /^((.*):)?nil$/.match(key)
-          @nil_element = attributes.delete(key) == "true"
-          attributes.delete("xmlns:#{result[2]}") if result[1]
-        end
-        attributes.delete(key) if @options[:delete_namespace_attributes] && key[/^(xmlns|xsi)/]
-      end
-      @attributes = undasherize_keys(attributes)
-      @children = []
-      @text = false
+      @attributes = clean_attributes(attributes)
+      @child_nodes = []
     end
 
-    attr_accessor :name, :attributes, :children, :type
+    attr_accessor :name, :attributes, :child_nodes, :type
+
+    def clean_attributes(attributes)
+      attributes.tap do |a|
+        a.keys.each do |key|
+          delete_niled_attributes(a, key)
+          if @options[:delete_namespace_attributes] &&
+              @options[:type_converter].attribute_namespace_prefix_matches?(key)
+            a.delete(key)
+          end
+          convert_dashed_key_to_underscore(a, key) if key.index('-')
+        end
+      end
+    end
+
+    # TODO - what is it good for ?
+    # The nil attribute can be specified to delete other attributes.
+    # The namespace of the nil attribute is the name of the attribute that should be deleted.
+    def delete_niled_attributes(attributes, key)
+      if result = /^((.*):)?nil$/.match(key)
+        @nil_element = (attributes.delete(key) == "true")
+        attributes.delete("xmlns:#{result[2]}") if result[1]
+      end
+    end
+
+    # Take keys of the form foo-bar and convert them to foo_bar
+    def convert_dashed_key_to_underscore(attributes, key)
+      attributes[key.tr("-", "_")] = attributes.delete(key)
+    end
 
     def prefixed_attributes
       attributes.inject({}) do |memo, (key, value)|
@@ -117,118 +69,75 @@ class Nori
 
     def add_node(node)
       @text = true if node.is_a? String
-      @children << node
+      @child_nodes << node
+    end
+
+    def type
+      @type ||= @options[:type_converter].type(attributes)
     end
 
     def to_hash
-      if @type == "file"
-        f = StringIOFile.new((@children.first || '').unpack('m').first)
-        f.original_filename = attributes['name'] || 'untitled'
-        f.content_type = attributes['content_type'] || 'application/octet-stream'
-        return { name => f }
-      end
-
-      if @text
-        t = typecast_value(inner_html)
-        t = advanced_typecasting(t) if t.is_a?(String) && @options[:advanced_typecasting]
-
-        if t.is_a?(String)
-          t = StringWithAttributes.new(t)
-          t.attributes = attributes
-        end
-
-        return { name => t }
+      conversion = @options[:type_converter].conversion(type)
+      if conversion
+        value = conversion.convert(inner_html)
+        @attributes.delete(@options[:type_converter].namespaced_type_attribute)
       else
-        #change repeating groups into an array
-        groups = @children.inject({}) { |s,e| (s[e.name] ||= []) << e; s }
-
-        out = nil
-        if @type == "array"
-          out = []
-          groups.each do |k, v|
-            if v.size == 1
-              out << v.first.to_hash.entries.first.last
-            else
-              out << v.map{|e| e.to_hash[k]}
-            end
-          end
-          out = out.flatten
-
-        else # If Hash
-          out = {}
-          groups.each do |k,v|
-            if v.size == 1
-              out.merge!(v.first)
-            else
-              out.merge!( k => v.map{|e| e.to_hash[k]})
-            end
-          end
-          out.merge! prefixed_attributes unless attributes.empty?
-          out = out.empty? ? nil : out
-        end
-
-        if @type && out.nil?
-          { name => typecast_value(out) }
+        if type == 'file'
+          value = create_file
+        elsif type == 'array'
+          value = create_array
         else
-          { name => out }
+          if @text
+            value = @options[:advanced_typecasting] ? TypeConverter::Autodetect.convert(inner_html) : inner_html
+            value = value.is_a?(String) ? StringWithAttributes.new(inner_html, attributes) : value
+          else
+            value = create_hash
+          end
         end
       end
+      return {name => value}
     end
 
-    # Typecasts a value based upon its type. For instance, if
-    # +node+ has #type == "integer",
-    # {{[node.typecast_value("12") #=> 12]}}
-    #
-    # @param value<String> The value that is being typecast.
-    #
-    # @details [:type options]
-    #   "integer"::
-    #     converts +value+ to an integer with #to_i
-    #   "boolean"::
-    #     checks whether +value+, after removing spaces, is the literal
-    #     "true"
-    #   "datetime"::
-    #     Parses +value+ using Time.parse, and returns a UTC Time
-    #   "date"::
-    #     Parses +value+ using Date.parse
-    #
-    # @return <Integer, TrueClass, FalseClass, Time, Date, Object>
-    #   The result of typecasting +value+.
-    #
-    # @note
-    #   If +self+ does not have a "type" key, or if it's not one of the
-    #   options specified above, the raw +value+ will be returned.
-    def typecast_value(value)
-      return value unless @type
-      proc = self.class.typecasts[@type]
-      proc.nil? ? value : proc.call(value)
-    end
-
-    def advanced_typecasting(value)
-      split = value.split
-      return value if split.size > 1
-
-      case split.first
-        when "true"       then true
-        when "false"      then false
-        when XS_DATE_TIME then try_to_convert(value) {|x| DateTime.parse(x)}
-        when XS_DATE      then try_to_convert(value) {|x| Date.parse(x)}
-        when XS_TIME      then try_to_convert(value) {|x| Time.parse(x)}
-        else                   value
+    def create_file
+      StringIOFile.new((@child_nodes.first || '').unpack('m').first).tap do |file|
+        file.original_filename = attributes['name'] || 'untitled'
+        file.content_type = attributes['content_type'] || 'application/octet-stream'
       end
     end
 
-    # Take keys of the form foo-bar and convert them to foo_bar
-    def undasherize_keys(params)
-      params.keys.each do |key, value|
-        params[key.tr("-", "_")] = params.delete(key)
+    def child_nodes_grouped
+      @child_nodes.inject({}) do |node_groups, node|
+        (node_groups[node.name] ||= []) << node
+        node_groups
       end
-      params
+    end
+
+    def create_array
+      child_nodes_grouped.collect do |group_name, nodes|
+        if nodes.size == 1
+          nodes.first.to_hash.entries.first.last
+        else
+          nodes.map{|node| node.to_hash[group_name]}
+        end
+      end.flatten
+    end
+
+    def create_hash
+      hash = {}
+      child_nodes_grouped.each do |group_name, nodes|
+        if nodes.size == 1
+          hash.merge!(nodes.first)
+        else
+          hash.merge!(group_name => nodes.map{|node| node.to_hash[group_name]})
+        end
+      end
+      hash.merge! prefixed_attributes unless attributes.empty?
+      hash.empty? ? nil : hash
     end
 
     # Get the inner_html of the REXML node.
     def inner_html
-      @children.join
+      @child_nodes.join
     end
 
     # Converts the node into a readable HTML node.
@@ -240,14 +149,5 @@ class Nori
     end
 
     alias to_s to_html
-
-  private
-
-    def try_to_convert(value, &block)
-      block.call(value)
-    rescue ArgumentError
-      value
-    end
   end
-
 end

@@ -13,12 +13,24 @@ class Nori
 
   PARSERS = { :rexml => "REXML", :nokogiri => "Nokogiri" }
 
+  DEFAULT_TYPE_CONVERTER =  TypeConverter.new(
+      'int|integer' => TypeConverter::ToInteger,
+      'boolean' => TypeConverter::ToBoolean,
+      'date[Tt]ime' => TypeConverter::ToTime,
+      'date' => TypeConverter::ToDate,
+      'decimal' => TypeConverter::ToDecimal,
+      'double|float' => TypeConverter::ToFloat,
+      'string' => TypeConverter::ToString,
+      'base64Binary' => TypeConverter::Base64ToBinary
+  )
+
   def initialize(options = {})
     defaults = {
       :strip_namespaces             => false,
       :delete_namespace_attributes  => false,
       :convert_tags_to              => nil,
       :advanced_typecasting         => true,
+      :type_converter               => DEFAULT_TYPE_CONVERTER,
       :parser                       => :nokogiri
     }
 

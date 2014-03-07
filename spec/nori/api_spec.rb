@@ -162,6 +162,14 @@ describe Nori do
     end
   end
 
+  context "#parse with :convert_dashes_to_underscores" do
+    it "can be configured to skip dash to underscope conversion" do
+      xml = '<any-tag>foo bar</any-tag'
+      hash = nori(:convert_dashes_to_underscores => false).parse(xml)
+      hash.should == {'any-tag' => 'foo bar'}
+    end
+  end
+
   def nori(options = {})
     Nori.new(options)
   end

@@ -67,3 +67,21 @@ parser = Nori.new(:convert_tags_to => lambda { |tag| tag.snakecase.to_sym })
 xml = '<userResponse><accountStatus>active</accountStatus></userResponse>'
 parser.parse(xml)  # => { :user_response => { :account_status => "active" }
 ```
+
+Dashes and underscores
+----------------------
+
+Nori will automatically convert dashes in tag names to underscores.
+For example:
+
+```ruby
+parser = Nori.new
+parser.parse('<any-tag>foo bar</any-tag>')  # => { "any_tag" => "foo bar" }
+```
+
+You can control this behavior with the `:convert_dashes_to_underscores` option:
+
+```ruby
+parser = Nori.new(:convert_dashes_to_underscores => false)
+parser.parse('<any-tag>foo bar</any-tag>') # => { "any-tag" => "foo bar" }
+```

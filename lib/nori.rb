@@ -5,7 +5,7 @@ require "nori/xml_utility_node"
 class Nori
 
   def self.hash_key(name, options = {})
-    name = name.tr("-", "_")
+    name = name.tr("-", "_") if options[:convert_dashes_to_underscores]
     name = name.split(":").last if options[:strip_namespaces]
     name = options[:convert_tags_to].call(name) if options[:convert_tags_to].respond_to? :call
     name
@@ -20,6 +20,7 @@ class Nori
       :convert_tags_to              => nil,
       :convert_attributes_to        => nil,
       :advanced_typecasting         => true,
+      :convert_dashes_to_underscores => true,
       :parser                       => :nokogiri
     }
 

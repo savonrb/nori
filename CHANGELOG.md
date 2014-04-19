@@ -1,3 +1,11 @@
+# 2.4.0 (2014-04-19)
+
+* Change: Dropped support for ruby 1.8, rubinius and ree
+
+* Feature: Added `:convert_attributes` feature similar to `:convert_tags_to`
+
+* Feature: Added `:convert_dashes_to_underscore` option
+
 # 2.3.0 (2013-07-26)
 
 * Change: `Nori#find` now ignores namespace prefixes in Hash keys it is searching through.

@@ -4,7 +4,7 @@ describe Nori do
 
   describe "PARSERS" do
     it "should return a Hash of parser details" do
-      Nori::PARSERS.should == { :rexml => "REXML", :nokogiri => "Nokogiri" }
+      expect(Nori::PARSERS).to eq({ :rexml => "REXML", :nokogiri => "Nokogiri" })
     end
   end
 
@@ -16,12 +16,12 @@ describe Nori do
         </history>
       XML
 
-      nori.parse(xml)["history"]["ns10:case"].should == "a_case"
+      expect(nori.parse(xml)["history"]["ns10:case"]).to eq("a_case")
     end
 
     it "defaults to not change XML tags" do
       xml = '<userResponse id="1"><accountStatus>active</accountStatus></userResponse>'
-      nori.parse(xml).should == { "userResponse" => { "@id" => "1", "accountStatus" => "active" } }
+      expect(nori.parse(xml)).to eq({ "userResponse" => { "@id" => "1", "accountStatus" => "active" } })
     end
 
     it "raises when passed unknown global options" do
@@ -33,7 +33,7 @@ describe Nori do
   context ".new with :strip_namespaces" do
     it "strips the namespace identifiers when set to true" do
       xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"></soap:Envelope>'
-      nori(:strip_namespaces => true).parse(xml).should have_key("Envelope")
+      expect(nori(:strip_namespaces => true).parse(xml)).to have_key("Envelope")
     end
 
     it "still converts namespaced entries to array elements" do
@@ -47,7 +47,7 @@ describe Nori do
       XML
 
       expected = [{ "name" => "a_name" }, { "name" => "another_name" }]
-      nori(:strip_namespaces => true).parse(xml)["history"]["case"].should == expected
+      expect(nori(:strip_namespaces => true).parse(xml)["history"]["case"]).to eq(expected)
     end
   end
 
@@ -58,7 +58,7 @@ describe Nori do
       snakecase_symbols = lambda { |tag| tag.snakecase.to_sym }
       nori = nori(:convert_tags_to => snakecase_symbols)
 
-      nori.parse(xml).should == { :user_response => { :@id => "1", :account_status => "active" } }
+      expect(nori.parse(xml)).to eq({ :user_response => { :@id => "1", :account_status => "active" } })
     end
   end
 
@@ -98,29 +98,29 @@ describe Nori do
   context "#parse" do
     it "defaults to use advanced typecasting" do
       hash = nori.parse("<value>true</value>")
-      hash["value"].should == true
+      expect(hash["value"]).to eq(true)
     end
 
     it "defaults to use the Nokogiri parser" do
       # parsers are loaded lazily by default
       require "nori/parser/nokogiri"
 
-      Nori::Parser::Nokogiri.should_receive(:parse).and_return({})
+      expect(Nori::Parser::Nokogiri).to receive(:parse).and_return({})
       nori.parse("<any>thing</any>")
     end
 
     it "strips the XML" do
       xml = double("xml")
-      xml.should_receive(:strip).and_return("<any>thing</any>")
+      expect(xml).to receive(:strip).and_return("<any>thing</any>")
 
-      nori.parse(xml).should == { "any" => "thing" }
+      expect(nori.parse(xml)).to eq({ "any" => "thing" })
     end
   end
 
   context "#parse without :advanced_typecasting" do
     it "can be changed to not typecast too much" do
       hash = nori(:advanced_typecasting => false).parse("<value>true</value>")
-      hash["value"].should == "true"
+      expect(hash["value"]).to eq("true")
     end
   end
 
@@ -129,7 +129,7 @@ describe Nori do
       # parsers are loaded lazily by default
       require "nori/parser/rexml"
 
-      Nori::Parser::REXML.should_receive(:parse).and_return({})
+      expect(Nori::Parser::REXML).to receive(:parse).and_return({})
       nori(:parser => :rexml).parse("<any>thing</any>")
     end
   end
@@ -138,13 +138,13 @@ describe Nori do
     it "can be changed to not delete xmlns attributes" do
       xml = '<userResponse xmlns="http://schema.company.com/some/path/to/namespace/v1"><accountStatus>active</accountStatus></userResponse>'
       hash = nori(:delete_namespace_attributes => false).parse(xml)
-      hash.should == {"userResponse" => {"@xmlns" => "http://schema.company.com/some/path/to/namespace/v1", "accountStatus" => "active"}}
+      expect(hash).to eq({"userResponse" => {"@xmlns" => "http://schema.company.com/some/path/to/namespace/v1", "accountStatus" => "active"}})
     end
 
     it "can be changed to not delete xsi attributes" do
       xml = '<userResponse xsi="abc:myType"><accountStatus>active</accountStatus></userResponse>'
       hash = nori(:delete_namespace_attributes => false).parse(xml)
-      hash.should == {"userResponse" => {"@xsi" => "abc:myType", "accountStatus" => "active"}}
+      expect(hash).to eq({"userResponse" => {"@xsi" => "abc:myType", "accountStatus" => "active"}})
     end
   end
 
@@ -152,13 +152,13 @@ describe Nori do
     it "can be changed to delete xmlns attributes" do
       xml = '<userResponse xmlns="http://schema.company.com/some/path/to/namespace/v1"><accountStatus>active</accountStatus></userResponse>'
       hash = nori(:delete_namespace_attributes => true).parse(xml)
-      hash.should == {"userResponse" => {"accountStatus" => "active"}}
+      expect(hash).to eq({"userResponse" => {"accountStatus" => "active"}})
     end
 
     it "can be changed to delete xsi attributes" do
       xml = '<userResponse xsi="abc:myType"><accountStatus>active</accountStatus></userResponse>'
       hash = nori(:delete_namespace_attributes => true).parse(xml)
-      hash.should == {"userResponse" => {"accountStatus" => "active"}}
+      expect(hash).to eq({"userResponse" => {"accountStatus" => "active"}})
     end
   end
 
@@ -166,7 +166,7 @@ describe Nori do
     it "can be configured to skip dash to underscope conversion" do
       xml = '<any-tag>foo bar</any-tag'
       hash = nori(:convert_dashes_to_underscores => false).parse(xml)
-      hash.should == {'any-tag' => 'foo bar'}
+      expect(hash).to eq({'any-tag' => 'foo bar'})
     end
   end
 

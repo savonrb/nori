@@ -12,23 +12,23 @@ describe Hash do
       { "foo" => {"1" => "bar", "2" => "baz"} } => "foo[1]=bar&foo[2]=baz"
     }.each do |hash, params|
       it "should covert hash: #{hash.inspect} to params: #{params.inspect}" do
-        hash.to_params.split('&').sort.should == params.split('&').sort
+        expect(hash.to_params.split('&').sort).to eq(params.split('&').sort)
       end
     end
 
     it "should not leave a trailing &" do
-      {
+      expect({
         :name => 'Bob',
         :address => {
           :street => '111 Ruby Ave.',
           :city => 'Ruby Central',
           :phones => ['111-111-1111', '222-222-2222']
         }
-      }.to_params.should_not =~ /&$/
+      }.to_params).not_to match(/&$/)
     end
 
     it "should URL encode unsafe characters" do
-      {:q => "?&\" +"}.to_params.should == "q=%3F%26%22%20%2B"
+      expect({:q => "?&\" +"}.to_params).to eq("q=%3F%26%22%20%2B")
     end
   end
 
@@ -40,8 +40,8 @@ describe Hash do
 
     it "should turn the hash into xml attributes" do
       attrs = { :one => "ONE", "two" => "TWO" }.to_xml_attributes
-      attrs.should =~ /one="ONE"/m
-      attrs.should =~ /two="TWO"/m
+      expect(attrs).to match(/one="ONE"/m)
+      expect(attrs).to match(/two="TWO"/m)
     end
 
     it "should preserve _ in hash keys" do
@@ -51,9 +51,9 @@ describe Hash do
         :merb                => "uses extlib"
       }.to_xml_attributes
 
-      attrs.should =~ /some_long_attribute="with short value"/
-      attrs.should =~ /merb="uses extlib"/
-      attrs.should =~ /crash="burn"/
+      expect(attrs).to match(/some_long_attribute="with short value"/)
+      expect(attrs).to match(/merb="uses extlib"/)
+      expect(attrs).to match(/crash="burn"/)
     end
   end
 

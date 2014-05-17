@@ -9,12 +9,12 @@ describe Nori do
 
       it "should work with unnormalized characters" do
         xml = '<root>&amp;</root>'
-        parse(xml).should == { 'root' => "&" }
+        expect(parse(xml)).to eq({ 'root' => "&" })
       end
 
       it "should transform a simple tag with content" do
         xml = "<tag>This is the contents</tag>"
-        parse(xml).should == { 'tag' => 'This is the contents' }
+        expect(parse(xml)).to eq({ 'tag' => 'This is the contents' })
       end
 
       it "should work with cdata tags" do
@@ -25,13 +25,13 @@ describe Nori do
           ]]>
           </tag>
         END
-        parse(xml)["tag"].strip.should == "text inside cdata"
+        expect(parse(xml)["tag"].strip).to eq("text inside cdata")
       end
 
       it "should transform a simple tag with attributes" do
         xml = "<tag attr1='1' attr2='2'></tag>"
         hash = { 'tag' => { '@attr1' => '1', '@attr2' => '2' } }
-        parse(xml).should == hash
+        expect(parse(xml)).to eq(hash)
       end
 
       it "should transform repeating siblings into an array" do
@@ -42,7 +42,7 @@ describe Nori do
           </opt>
         XML
 
-        parse(xml)['opt']['user'].class.should == Array
+        expect(parse(xml)['opt']['user'].class).to eq(Array)
 
         hash = {
           'opt' => {
@@ -56,7 +56,7 @@ describe Nori do
           }
         }
 
-        parse(xml).should == hash
+        expect(parse(xml)).to eq(hash)
       end
 
       it "should not transform non-repeating siblings into an array" do
@@ -66,7 +66,7 @@ describe Nori do
           </opt>
         XML
 
-        parse(xml)['opt']['user'].class.should == Hash
+        expect(parse(xml)['opt']['user'].class).to eq(Hash)
 
         hash = {
           'opt' => {
@@ -77,7 +77,7 @@ describe Nori do
           }
         }
 
-        parse(xml).should == hash
+        expect(parse(xml)).to eq(hash)
       end
 
       it "should prefix attributes with an @-sign to avoid problems with overwritten values" do
@@ -88,96 +88,101 @@ describe Nori do
           </multiRef>
         XML
 
-        parse(xml)["multiRef"].should == { "login" => "grep", "@id" => "id1", "id" => "76737" }
+        expect(parse(xml)["multiRef"]).to eq({ "login" => "grep", "@id" => "id1", "id" => "76737" })
       end
 
       context "without advanced typecasting" do
         it "should not transform 'true'" do
           hash = parse("<value>true</value>", :advanced_typecasting => false)
-          hash["value"].should == "true"
+          expect(hash["value"]).to eq("true")
         end
 
         it "should not transform 'false'" do
           hash = parse("<value>false</value>", :advanced_typecasting => false)
-          hash["value"].should == "false"
+          expect(hash["value"]).to eq("false")
         end
 
         it "should not transform Strings matching the xs:time format" do
           hash = parse("<value>09:33:55Z</value>", :advanced_typecasting => false)
-          hash["value"].should == "09:33:55Z"
+          expect(hash["value"]).to eq("09:33:55Z")
         end
 
         it "should not transform Strings matching the xs:date format" do
           hash = parse("<value>1955-04-18-05:00</value>", :advanced_typecasting => false)
-          hash["value"].should == "1955-04-18-05:00"
+          expect(hash["value"]).to eq("1955-04-18-05:00")
         end
 
         it "should not transform Strings matching the xs:dateTime format" do
           hash = parse("<value>1955-04-18T11:22:33-05:00</value>", :advanced_typecasting => false)
-          hash["value"].should == "1955-04-18T11:22:33-05:00"
+          expect(hash["value"]).to eq("1955-04-18T11:22:33-05:00")
         end
       end
 
       context "with advanced typecasting" do
         it "should transform 'true' to TrueClass" do
-          parse("<value>true</value>")["value"].should == true
+          expect(parse("<value>true</value>")["value"]).to eq(true)
         end
 
         it "should transform 'false' to FalseClass" do
-          parse("<value>false</value>")["value"].should == false
+          expect(parse("<value>false</value>")["value"]).to eq(false)
         end
 
         it "should transform Strings matching the xs:time format to Time objects" do
-          parse("<value>09:33:55Z</value>")["value"].should == Time.parse("09:33:55Z")
+          expect(parse("<value>09:33:55Z</value>")["value"]).to eq(Time.parse("09:33:55Z"))
         end
 
         it "should transform Strings matching the xs:time format ahead of utc to Time objects" do
-          parse("<value>09:33:55+02:00</value>")["value"].should == Time.parse("09:33:55+02:00")
+          expect(parse("<value>09:33:55+02:00</value>")["value"]).to eq(Time.parse("09:33:55+02:00"))
         end
 
         it "should transform Strings matching the xs:date format to Date objects" do
-          parse("<value>1955-04-18-05:00</value>")["value"].should == Date.parse("1955-04-18-05:00")
+          expect(parse("<value>1955-04-18-05:00</value>")["value"]).to eq(Date.parse("1955-04-18-05:00"))
         end
 
         it "should transform Strings matching the xs:dateTime format ahead of utc to Date objects" do
-          parse("<value>1955-04-18+02:00</value>")["value"].should == Date.parse("1955-04-18+02:00")
+          expect(parse("<value>1955-04-18+02:00</value>")["value"]).to eq(Date.parse("1955-04-18+02:00"))
         end
 
         it "should transform Strings matching the xs:dateTime format to DateTime objects" do
-          parse("<value>1955-04-18T11:22:33-05:00</value>")["value"].should ==
+          expect(parse("<value>1955-04-18T11:22:33-05:00</value>")["value"]).to eq(
             DateTime.parse("1955-04-18T11:22:33-05:00")
+          )
         end
 
         it "should transform Strings matching the xs:dateTime format ahead of utc to DateTime objects" do
-          parse("<value>1955-04-18T11:22:33+02:00</value>")["value"].should ==
+          expect(parse("<value>1955-04-18T11:22:33+02:00</value>")["value"]).to eq(
             DateTime.parse("1955-04-18T11:22:33+02:00")
+          )
         end
 
         it "should transform Strings matching the xs:dateTime format with seconds and an offset to DateTime objects" do
-          parse("<value>2004-04-12T13:20:15.5-05:00</value>")["value"].should ==
+          expect(parse("<value>2004-04-12T13:20:15.5-05:00</value>")["value"]).to eq(
             DateTime.parse("2004-04-12T13:20:15.5-05:00")
+          )
         end
 
         it "should not transform Strings containing an xs:time String and more" do
-          parse("<value>09:33:55Z is a time</value>")["value"].should == "09:33:55Z is a time"
-          parse("<value>09:33:55Z_is_a_file_name</value>")["value"].should == "09:33:55Z_is_a_file_name"
+          expect(parse("<value>09:33:55Z is a time</value>")["value"]).to eq("09:33:55Z is a time")
+          expect(parse("<value>09:33:55Z_is_a_file_name</value>")["value"]).to eq("09:33:55Z_is_a_file_name")
         end
 
         it "should not transform Strings containing an xs:date String and more" do
-          parse("<value>1955-04-18-05:00 is a date</value>")["value"].should == "1955-04-18-05:00 is a date"
-          parse("<value>1955-04-18-05:00_is_a_file_name</value>")["value"].should == "1955-04-18-05:00_is_a_file_name"
+          expect(parse("<value>1955-04-18-05:00 is a date</value>")["value"]).to eq("1955-04-18-05:00 is a date")
+          expect(parse("<value>1955-04-18-05:00_is_a_file_name</value>")["value"]).to eq("1955-04-18-05:00_is_a_file_name")
         end
 
         it "should not transform Strings containing an xs:dateTime String and more" do
-          parse("<value>1955-04-18T11:22:33-05:00 is a dateTime</value>")["value"].should ==
+          expect(parse("<value>1955-04-18T11:22:33-05:00 is a dateTime</value>")["value"]).to eq(
             "1955-04-18T11:22:33-05:00 is a dateTime"
-          parse("<value>1955-04-18T11:22:33-05:00_is_a_file_name</value>")["value"].should ==
+          )
+          expect(parse("<value>1955-04-18T11:22:33-05:00_is_a_file_name</value>")["value"]).to eq(
             "1955-04-18T11:22:33-05:00_is_a_file_name"
+          )
         end
 
         ["00-00-00", "0000-00-00", "0000-00-00T00:00:00", "0569-23-0141", "DS2001-19-1312654773", "e6:53:01:00:ce:b4:06"].each do |date_string|
           it "should not transform a String like '#{date_string}' to date or time" do
-            parse("<value>#{date_string}</value>")["value"].should == date_string
+            expect(parse("<value>#{date_string}</value>")["value"]).to eq(date_string)
           end
         end
       end
@@ -194,59 +199,59 @@ describe Nori do
         end
 
         it "correctly parse text nodes" do
-          @data.should == {
+          expect(@data).to eq({
             'opt' => {
               'user' => [
                 'Gary R Epstein',
                 'Simon T Tyson'
               ]
             }
-          }
+          })
         end
 
         it "be parse attributes for text node if present" do
-          @data['opt']['user'][0].attributes.should == {'login' => 'grep'}
+          expect(@data['opt']['user'][0].attributes).to eq({'login' => 'grep'})
         end
 
         it "default attributes to empty hash if not present" do
-          @data['opt']['user'][1].attributes.should == {}
+          expect(@data['opt']['user'][1].attributes).to eq({})
         end
 
         it "add 'attributes' accessor methods to parsed instances of String" do
-          @data['opt']['user'][0].should respond_to(:attributes)
-          @data['opt']['user'][0].should respond_to(:attributes=)
+          expect(@data['opt']['user'][0]).to respond_to(:attributes)
+          expect(@data['opt']['user'][0]).to respond_to(:attributes=)
         end
 
         it "not add 'attributes' accessor methods to all instances of String" do
-          "some-string".should_not respond_to(:attributes)
-          "some-string".should_not respond_to(:attributes=)
+          expect("some-string").not_to respond_to(:attributes)
+          expect("some-string").not_to respond_to(:attributes=)
         end
       end
 
       it "should typecast an integer" do
         xml = "<tag type='integer'>10</tag>"
-        parse(xml)['tag'].should == 10
+        expect(parse(xml)['tag']).to eq(10)
       end
 
       it "should typecast a true boolean" do
         xml = "<tag type='boolean'>true</tag>"
-        parse(xml)['tag'].should be(true)
+        expect(parse(xml)['tag']).to be(true)
       end
 
       it "should typecast a false boolean" do
         ["false"].each do |w|
-          parse("<tag type='boolean'>#{w}</tag>")['tag'].should be(false)
+          expect(parse("<tag type='boolean'>#{w}</tag>")['tag']).to be(false)
         end
       end
 
       it "should typecast a datetime" do
         xml = "<tag type='datetime'>2007-12-31 10:32</tag>"
-        parse(xml)['tag'].should == Time.parse( '2007-12-31 10:32' ).utc
+        expect(parse(xml)['tag']).to eq(Time.parse( '2007-12-31 10:32' ).utc)
       end
 
       it "should typecast a date" do
         xml = "<tag type='date'>2007-12-31</tag>"
-        parse(xml)['tag'].should == Date.parse('2007-12-31')
+        expect(parse(xml)['tag']).to eq(Date.parse('2007-12-31'))
       end
 
       xml_entities = {
@@ -260,51 +265,51 @@ describe Nori do
       it "should unescape html entities" do
         xml_entities.each do |k,v|
           xml = "<tag>Some content #{v}</tag>"
-          parse(xml)['tag'].should =~ Regexp.new(k)
+          expect(parse(xml)['tag']).to match(Regexp.new(k))
         end
       end
 
       it "should unescape XML entities in attributes" do
         xml_entities.each do |key, value|
           xml = "<tag attr='Some content #{value}'></tag>"
-          parse(xml)['tag']['@attr'].should =~ Regexp.new(key)
+          expect(parse(xml)['tag']['@attr']).to match(Regexp.new(key))
         end
       end
 
       it "should undasherize keys as tags" do
         xml = "<tag-1>Stuff</tag-1>"
-        parse(xml).keys.should include('tag_1')
+        expect(parse(xml).keys).to include('tag_1')
       end
 
       it "should undasherize keys as attributes" do
         xml = "<tag1 attr-1='1'></tag1>"
-        parse(xml)['tag1'].keys.should include('@attr_1')
+        expect(parse(xml)['tag1'].keys).to include('@attr_1')
       end
 
       it "should undasherize keys as tags and attributes" do
         xml = "<tag-1 attr-1='1'></tag-1>"
-        parse(xml).keys.should include('tag_1')
-        parse(xml)['tag_1'].keys.should include('@attr_1')
+        expect(parse(xml).keys).to include('tag_1')
+        expect(parse(xml)['tag_1'].keys).to include('@attr_1')
       end
 
       it "should render nested content correctly" do
         xml = "<root><tag1>Tag1 Content <em><strong>This is strong</strong></em></tag1></root>"
-        parse(xml)['root']['tag1'].should == "Tag1 Content <em><strong>This is strong</strong></em>"
+        expect(parse(xml)['root']['tag1']).to eq("Tag1 Content <em><strong>This is strong</strong></em>")
       end
 
       it "should render nested content with splshould text nodes correctly" do
         xml = "<root>Tag1 Content<em>Stuff</em> Hi There</root>"
-        parse(xml)['root'].should == "Tag1 Content<em>Stuff</em> Hi There"
+        expect(parse(xml)['root']).to eq("Tag1 Content<em>Stuff</em> Hi There")
       end
 
       it "should ignore attributes when a child is a text node" do
         xml = "<root attr1='1'>Stuff</root>"
-        parse(xml).should == { "root" => "Stuff" }
+        expect(parse(xml)).to eq({ "root" => "Stuff" })
       end
 
       it "should ignore attributes when any child is a text node" do
         xml = "<root attr1='1'>Stuff <em>in italics</em></root>"
-        parse(xml).should == { "root" => "Stuff <em>in italics</em>" }
+        expect(parse(xml)).to eq({ "root" => "Stuff <em>in italics</em>" })
       end
 
       it "should correctly transform multiple children" do
@@ -329,7 +334,7 @@ describe Nori do
           }
         }
 
-        parse(xml).should == hash
+        expect(parse(xml)).to eq(hash)
       end
 
       it "should properly handle nil values (ActiveSupport Compatible)" do
@@ -359,7 +364,7 @@ describe Nori do
           'nil_true'   => nil,
           'namespaced' => nil
         }
-        parse(topic_xml)["topic"].should == expected_topic_hash
+        expect(parse(topic_xml)["topic"]).to eq(expected_topic_hash)
       end
 
       it "should handle a single record from xml (ActiveSupport Compatible)" do
@@ -404,7 +409,7 @@ describe Nori do
         }
 
         parse(topic_xml)["topic"].each do |k,v|
-          v.should == expected_topic_hash[k]
+          expect(v).to eq(expected_topic_hash[k])
         end
       end
 
@@ -456,7 +461,7 @@ describe Nori do
 
         # puts Nori.parse(topics_xml)['topics'].first.inspect
         parse(topics_xml)["topics"].first.each do |k,v|
-          v.should == expected_topic_hash[k]
+          expect(v).to eq(expected_topic_hash[k])
         end
       end
 
@@ -467,7 +472,7 @@ describe Nori do
             <user name="value"><age>21</age></user>
           XML
 
-          parse(xml, :convert_attributes_to => converter).should == {'user' => {'@name_k' => 'value_v', 'age' => '21'}}
+          expect(parse(xml, :convert_attributes_to => converter)).to eq({'user' => {'@name_k' => 'value_v', 'age' => '21'}})
         end
       end
 
@@ -492,7 +497,7 @@ describe Nori do
         }
 
         parse(topic_xml)["rsp"]["photos"]["photo"].each do |k, v|
-          v.should == expected_topic_hash[k]
+          expect(v).to eq(expected_topic_hash[k])
         end
       end
 
@@ -503,7 +508,7 @@ describe Nori do
           </blog>
         XML
         expected_blog_hash = {"blog" => {"posts" => []}}
-        parse(blog_xml).should == expected_blog_hash
+        expect(parse(blog_xml)).to eq(expected_blog_hash)
       end
 
       it "should handle empty array with whitespace from xml (ActiveSupport Compatible)" do
@@ -514,7 +519,7 @@ describe Nori do
           </blog>
         XML
         expected_blog_hash = {"blog" => {"posts" => []}}
-        parse(blog_xml).should == expected_blog_hash
+        expect(parse(blog_xml)).to eq(expected_blog_hash)
       end
 
       it "should handle array with one entry from_xml (ActiveSupport Compatible)" do
@@ -526,7 +531,7 @@ describe Nori do
           </blog>
         XML
         expected_blog_hash = {"blog" => {"posts" => ["a post"]}}
-        parse(blog_xml).should == expected_blog_hash
+        expect(parse(blog_xml)).to eq(expected_blog_hash)
       end
 
       it "should handle array with multiple entries from xml (ActiveSupport Compatible)" do
@@ -539,7 +544,7 @@ describe Nori do
           </blog>
         XML
         expected_blog_hash = {"blog" => {"posts" => ["a post", "another post"]}}
-        parse(blog_xml).should == expected_blog_hash
+        expect(parse(blog_xml)).to eq(expected_blog_hash)
       end
 
       it "should handle file types (ActiveSupport Compatible)" do
@@ -550,12 +555,12 @@ describe Nori do
           </blog>
         XML
         hash = parse(blog_xml)
-        hash.keys.should include('blog')
-        hash['blog'].keys.should include('logo')
+        expect(hash.keys).to include('blog')
+        expect(hash['blog'].keys).to include('logo')
 
         file = hash['blog']['logo']
-        file.original_filename.should == 'logo.png'
-        file.content_type.should == 'image/png'
+        expect(file.original_filename).to eq('logo.png')
+        expect(file.content_type).to eq('image/png')
       end
 
       it "should handle file from xml with defaults (ActiveSupport Compatible)" do
@@ -566,8 +571,8 @@ describe Nori do
           </blog>
         XML
         file = parse(blog_xml)['blog']['logo']
-        file.original_filename.should == 'untitled'
-        file.content_type.should == 'application/octet-stream'
+        expect(file.original_filename).to eq('untitled')
+        expect(file.content_type).to eq('application/octet-stream')
       end
 
       it "should handle xsd like types from xml (ActiveSupport Compatible)" do
@@ -591,7 +596,7 @@ describe Nori do
           'illustration' => "babe.png"
         }
 
-        parse(bacon_xml)["bacon"].should == expected_bacon_hash
+        expect(parse(bacon_xml)["bacon"]).to eq(expected_bacon_hash)
       end
 
       it "should let type trickle through when unknown (ActiveSupport Compatible)" do
@@ -608,7 +613,7 @@ describe Nori do
           'image' => {'@type' => 'ProductImage', 'filename' => 'image.gif' },
         }
 
-        parse(product_xml)["product"].should == expected_product_hash
+        expect(parse(product_xml)["product"]).to eq(expected_product_hash)
       end
 
       it "should handle unescaping from xml (ActiveResource Compatible)" do
@@ -618,16 +623,16 @@ describe Nori do
          'pre_escaped_string' => 'First &amp; Last Name'
        }
 
-       parse(xml_string)['person'].should == expected_hash
+       expect(parse(xml_string)['person']).to eq(expected_hash)
      end
 
       it "handle an empty xml string" do
-        parse('').should == {}
+        expect(parse('')).to eq({})
       end
 
       # As returned in the response body by the unfuddle XML API when creating objects
       it "handle an xml string containing a single space" do
-        parse(' ').should == {}
+        expect(parse(' ')).to eq({})
       end
 
     end

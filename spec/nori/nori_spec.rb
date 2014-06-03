@@ -209,7 +209,7 @@ describe Nori do
           })
         end
 
-        it "be parse attributes for text node if present" do
+        it "parses attributes for text node if present" do
           expect(@data['opt']['user'][0].attributes).to eq({'login' => 'grep'})
         end
 
@@ -297,7 +297,7 @@ describe Nori do
         expect(parse(xml)['root']['tag1']).to eq("Tag1 Content <em><strong>This is strong</strong></em>")
       end
 
-      it "should render nested content with splshould text nodes correctly" do
+      it "should render nested content with text nodes correctly" do
         xml = "<root>Tag1 Content<em>Stuff</em> Hi There</root>"
         expect(parse(xml)['root']).to eq("Tag1 Content<em>Stuff</em> Hi There")
       end

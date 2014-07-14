@@ -24,10 +24,11 @@ class Nori
     # 13:20:00-05:00    1:20 PM, US Eastern Standard Time
     # 13:20:00+02:00    1:20 PM, Central European Standard Time
     # 13:20:00Z         1:20 PM, Coordinated Universal Time (UTC)
+    # 13:20:30.5555Z    1:20 PM and 30.5555 seconds, Coordinated Universal Time (UTC)
     # 00:00:00          midnight
     # 24:00:00          midnight
 
-    XS_TIME = /^\d{2}:\d{2}:\d{2}[Z\.\-\+]?\d*:?\d*$/
+    XS_TIME = /^\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/
 
     # Simple xs:date Regexp.
     # Valid xs:date formats
@@ -38,7 +39,7 @@ class Nori
     # 2004-04-12+02:00     April 12, 2004, Central European Summer Time, which is 2 hours ahead of Coordinated Universal Time (UTC)
     # 2004-04-12Z          April 12, 2004, Coordinated Universal Time (UTC)
 
-    XS_DATE = /^[-]?\d{4}-\d{2}-\d{2}[Z\-\+]?\d*:?\d*$/
+    XS_DATE = /^-?\d{4}-\d{2}-\d{2}(?:Z|[+-]\d{2}:?\d{2})?$/
 
     # Simple xs:dateTime Regexp.
     # Valid xs:dateTime formats
@@ -48,8 +49,9 @@ class Nori
     # 2004-04-12T13:20:00+02:00     1:20 pm on April 12, 2004, Central European Summer Time
     # 2004-04-12T13:20:15.5-05:00   1:20 pm and 15.5 seconds on April 12, 2004, US Eastern Standard Time
     # 2004-04-12T13:20:00Z          1:20 pm on April 12, 2004, Coordinated Universal Time (UTC)
+    # 2004-04-12T13:20:15.5Z        1:20 pm and 15.5 seconds on April 12, 2004, Coordinated Universal Time (UTC)
 
-    XS_DATE_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[\.Z]?\d*[\-\+]?\d*:?\d*$/
+    XS_DATE_TIME = /^-?\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/
 
     def self.typecasts
       @@typecasts

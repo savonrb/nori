@@ -144,8 +144,8 @@ describe Nori do
         end
 
         it "should transform Strings matching the xs:dateTime format to DateTime objects" do
-          expect(parse("<value>1955-04-18T11:22:33-05:00</value>")["value"]).to eq(
-            DateTime.parse("1955-04-18T11:22:33-05:00")
+          expect(parse("<value>1955-04-18T11:22:33-05:00.5Z</value>")["value"]).to eq(
+            DateTime.parse("1955-04-18T11:22:33-05:00.5Z")
           )
         end
 

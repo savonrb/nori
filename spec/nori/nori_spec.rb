@@ -128,7 +128,7 @@ describe Nori do
         end
 
         it "should transform Strings matching the xs:time format to Time objects" do
-          expect(parse("<value>09:33:55Z</value>")["value"]).to eq(Time.parse("09:33:55Z"))
+          expect(parse("<value>09:33:55.7Z</value>")["value"]).to eq(Time.parse("09:33:55.7Z"))
         end
 
         it "should transform Strings matching the xs:time format ahead of utc to Time objects" do

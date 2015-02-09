@@ -4,21 +4,6 @@ class Nori
   module CoreExt
     module Hash
 
-      # @return <String> This hash as a query string
-      #
-      # @example
-      #   { :name => "Bob",
-      #     :address => {
-      #       :street => '111 Ruby Ave.',
-      #       :city => 'Ruby Central',
-      #       :phones => ['111-111-1111', '222-222-2222']
-      #     }
-      #   }.to_params
-      #     #=> "name=Bob&address[city]=Ruby Central&address[phones][]=111-111-1111&address[phones][]=222-222-2222&address[street]=111 Ruby Ave."
-      def to_params
-        map { |k, v| normalize_param(k,v) }.flatten.join('&')
-      end
-
       # @param key<Object> The key for the param.
       # @param value<Object> The value for the param.
       #

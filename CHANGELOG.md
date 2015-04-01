@@ -1,3 +1,7 @@
+# 2.5.0 (2015-03-31)
+
+* Formally drop support for ruby 1.8.7. Installing Nori from rubygems for that version should no longer attempt to install versions that will not work.
+
 # 2.4.0 (2014-04-19)
 
 * Change: Dropped support for ruby 1.8, rubinius and ree

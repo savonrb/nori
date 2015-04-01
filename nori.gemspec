@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/savonrb/nori"
   s.summary     = "XML to Hash translator"
   s.description = s.summary
+  s.required_ruby_version = '>= 1.9.2'
 
   s.rubyforge_project = "nori"
   s.license = "MIT"

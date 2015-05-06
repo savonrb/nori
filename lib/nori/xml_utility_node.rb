@@ -171,7 +171,7 @@ class Nori
             end
           end
           out.merge! prefixed_attributes unless attributes.empty?
-          out = out.empty? ? nil : out
+          out = out.empty? ? @options[:empty_tag_value] : out
         end
 
         if @type && out.nil?
@@ -247,7 +247,7 @@ class Nori
     end
     alias to_s to_html
 
-  private
+    private
     def try_to_convert(value, &block)
       block.call(value)
     rescue ArgumentError

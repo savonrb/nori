@@ -1,3 +1,7 @@
+# 2.6.0 (2015-05-06)
+
+* Feature: [#69](https://github.com/savonrb/nori/pull/69) Add option to convert empty tags to a value other than nil.
+
 # 2.5.0 (2015-03-31)
 
 * Formally drop support for ruby 1.8.7. Installing Nori from rubygems for that version should no longer attempt to install versions that will not work.

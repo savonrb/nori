@@ -108,13 +108,6 @@ describe Nori do
       expect(Nori::Parser::Nokogiri).to receive(:parse).and_return({})
       nori.parse("<any>thing</any>")
     end
-
-    it "strips the XML" do
-      xml = double("xml")
-      expect(xml).to receive(:strip).and_return("<any>thing</any>")
-
-      expect(nori.parse(xml)).to eq({ "any" => "thing" })
-    end
   end
 
   context "#parse without :advanced_typecasting" do

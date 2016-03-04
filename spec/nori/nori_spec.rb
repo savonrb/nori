@@ -28,6 +28,11 @@ describe Nori do
         expect(parse(xml)["tag"].strip).to eq("text inside cdata")
       end
 
+      it "should scrub bad characters" do
+        xml = "<tag>a\xfbc</tag>".force_encoding('UTF-8')
+        expect(parse(xml)["tag"]).to eq("a\uFFFDc")
+      end
+
       it "should transform a simple tag with attributes" do
         xml = "<tag attr1='1' attr2='2'></tag>"
         hash = { 'tag' => { '@attr1' => '1', '@attr2' => '2' } }

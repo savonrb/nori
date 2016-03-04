@@ -22,6 +22,7 @@ class Nori
       :empty_tag_value               => nil,
       :advanced_typecasting          => true,
       :convert_dashes_to_underscores => true,
+      :scrub_xml                     => true,
       :parser                        => :nokogiri
     }
 
@@ -40,7 +41,7 @@ class Nori
   end
 
   def parse(xml)
-    cleaned_xml = xml.strip
+    cleaned_xml = scrub_xml(xml).strip
     return {} if cleaned_xml.empty?
 
     parser = load_parser @options[:parser]
@@ -75,6 +76,24 @@ class Nori
     end
 
     nil
+  end
+
+  def scrub_xml(string)
+    if @options[:scrub_xml]
+      if string.respond_to? :scrub
+        string.scrub
+      else
+        if string.valid_encoding?
+          string
+        else
+          enc = string.encoding
+          mid_enc = (["UTF-8", "UTF-16BE"].map { |e| Encoding.find(e) } - [enc]).first
+          string.encode(mid_enc, undef: :replace, invalid: :replace).encode(enc)
+        end
+      end
+    else
+      string 
+    end
   end
 
 end

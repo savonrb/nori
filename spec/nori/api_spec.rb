@@ -4,7 +4,7 @@ describe Nori do
 
   describe "PARSERS" do
     it "should return a Hash of parser details" do
-      expect(Nori::PARSERS).to eq({ :rexml => "REXML", :nokogiri => "Nokogiri" })
+      expect(Nori::PARSERS).to eq({ :rexml => "REXML", :nokogiri => "Nokogiri", :ox => "Ox" })
     end
   end
 

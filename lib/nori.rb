@@ -11,7 +11,7 @@ class Nori
     name
   end
 
-  PARSERS = { :rexml => "REXML", :nokogiri => "Nokogiri" }
+  PARSERS = { :rexml => "REXML", :nokogiri => "Nokogiri", :ox => "Ox" }
 
   def initialize(options = {})
     defaults = {

@@ -72,9 +72,9 @@ class Nori
     self.typecasts = {}
     self.typecasts["integer"]       = lambda { |v| v.nil? ? nil : v.to_i }
     self.typecasts["boolean"]       = lambda { |v| v.nil? ? nil : (v.strip != "false") }
-    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
+    self.typecasts["datetime"]      = lambda { |v| v.nil? ? nil : Time.parse(v) }
     self.typecasts["date"]          = lambda { |v| v.nil? ? nil : Date.parse(v) }
-    self.typecasts["dateTime"]      = lambda { |v| v.nil? ? nil : Time.parse(v).utc }
+    self.typecasts["dateTime"]      = lambda { |v| v.nil? ? nil : Time.parse(v) }
     self.typecasts["decimal"]       = lambda { |v| v.nil? ? nil : BigDecimal(v.to_s) }
     self.typecasts["double"]        = lambda { |v| v.nil? ? nil : v.to_f }
     self.typecasts["float"]         = lambda { |v| v.nil? ? nil : v.to_f }

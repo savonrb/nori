@@ -3,6 +3,7 @@ require "nori/core_ext"
 require "nori/xml_utility_node"
 
 class Nori
+  class ParseError < StandardError; end
 
   def self.hash_key(name, options = {})
     name = name.tr("-", "_") if options[:convert_dashes_to_underscores]

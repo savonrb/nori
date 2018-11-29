@@ -640,6 +640,10 @@ describe Nori do
         expect(parse(' ')).to eq({})
       end
 
+      it "raises error on missing end tag" do
+        expect { parse('<foo><bar>foo bar</foo>') }.to raise_error(Nori::ParseError)
+      end
+
     end
   end
 

@@ -1,10 +1,10 @@
 Nori
 ====
 
-[![Build Status](https://secure.travis-ci.org/savonrb/nori.png)](http://travis-ci.org/savonrb/nori)
-[![Gem Version](https://badge.fury.io/rb/nori.png)](http://badge.fury.io/rb/nori)
-[![Code Climate](https://codeclimate.com/github/savonrb/nori.png)](https://codeclimate.com/github/savonrb/nori)
-[![Coverage Status](https://coveralls.io/repos/savonrb/nori/badge.png?branch=master)](https://coveralls.io/r/savonrb/nori)
+[![Build Status](https://secure.travis-ci.org/savonrb/nori.svg?branch=master)](http://travis-ci.org/savonrb/nori)
+[![Gem Version](https://badge.fury.io/rb/nori.svg)](http://badge.fury.io/rb/nori)
+[![Code Climate](https://codeclimate.com/github/savonrb/nori.svg)](https://codeclimate.com/github/savonrb/nori)
+[![Coverage Status](https://coveralls.io/repos/savonrb/nori/badge.svg?branch=master)](https://coveralls.io/r/savonrb/nori)
 
 
 Really simple XML parsing ripped from Crack which ripped it from Merb.  

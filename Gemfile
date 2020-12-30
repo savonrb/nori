@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 gemspec
 
+ruby RUBY_VERSION
+
 platform :rbx do
   gem 'json'
   gem 'racc'

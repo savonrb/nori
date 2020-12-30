@@ -7,3 +7,7 @@ platform :rbx do
   gem 'rubysl'
   gem 'rubinius-coverage'
 end
+
+if RUBY_VERSION >= "3"
+  gem "rexml", "~> 3.2"
+end

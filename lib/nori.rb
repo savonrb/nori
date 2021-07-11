@@ -46,6 +46,8 @@ class Nori
 
     parser = load_parser @options[:parser]
     parser.parse(cleaned_xml, @options)
+  rescue NoMethodError => e
+    raise ArgumentError, "Parsing error (#{e.message}), might be malformed xml"
   end
 
   private

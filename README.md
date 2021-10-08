@@ -4,8 +4,6 @@ Nori
 [![CI](https://github.com/savonrb/nori/actions/workflows/test.yml/badge.svg)](https://github.com/savonrb/nori/actions/workflows/test.yml)
 [![Gem Version](https://badge.fury.io/rb/nori.svg)](http://badge.fury.io/rb/nori)
 [![Code Climate](https://codeclimate.com/github/savonrb/nori.svg)](https://codeclimate.com/github/savonrb/nori)
-[![Coverage Status](https://coveralls.io/repos/savonrb/nori/badge.svg?branch=master)](https://coveralls.io/r/savonrb/nori)
-
 
 Really simple XML parsing ripped from Crack which ripped it from Merb.  
 Nori was created to bypass the stale development of Crack, improve its XML parser  

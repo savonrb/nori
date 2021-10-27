@@ -10,6 +10,7 @@ class Nori
 
       class Document < ::Nokogiri::XML::SAX::Document
         attr_accessor :options
+        attr_accessor :last_error
 
         def stack
           @stack ||= []
@@ -44,6 +45,9 @@ class Nori
 
         alias cdata_block characters
 
+        def error(message)
+          @last_error = message
+        end
       end
 
       def self.parse(xml, options)
@@ -51,6 +55,7 @@ class Nori
         document.options = options
         parser = ::Nokogiri::XML::SAX::Parser.new document
         parser.parse xml
+        raise ParseError, document.last_error if document.last_error
         document.stack.length > 0 ? document.stack.pop.to_hash : {}
       end
 

@@ -21,11 +21,11 @@ describe Nori do
         xml = <<-END
           <tag>
           <![CDATA[
-            text inside cdata
+            text inside cdata &lt; test
           ]]>
           </tag>
         END
-        expect(parse(xml)["tag"].strip).to eq("text inside cdata")
+        expect(parse(xml)["tag"].strip).to eq("text inside cdata &lt; test")
       end
 
       it "should scrub bad characters" do

@@ -15,7 +15,8 @@ class Nori
         parser = ::REXML::Parsers::BaseParser.new(xml)
 
         while true
-          event = unnormalize(parser.pull)
+          raw_data = parser.pull
+          event = unnormalize(raw_data)
           case event[0]
           when :end_document
             break
@@ -28,15 +29,17 @@ class Nori
               temp = stack.pop
               stack.last.add_node(temp)
             end
-          when :text, :cdata
+          when :text
             stack.last.add_node(event[1]) unless event[1].strip.length == 0 || stack.empty?
+          when :cdata
+            stack.last.add_node(raw_data[1]) unless raw_data[1].strip.length == 0 || stack.empty?
           end
         end
         stack.length > 0 ? stack.pop.to_hash : {}
       end
 
       def self.unnormalize(event)
-        event.map! do |el|
+        event.map do |el|
           if el.is_a?(String)
             ::REXML::Text.unnormalize(el)
           elsif el.is_a?(Hash)

@@ -15,15 +15,16 @@ class Nori
 
   def initialize(options = {})
     defaults = {
-      :strip_namespaces              => false,
-      :delete_namespace_attributes   => false,
-      :convert_tags_to               => nil,
-      :convert_attributes_to         => nil,
-      :empty_tag_value               => nil,
-      :advanced_typecasting          => true,
-      :convert_dashes_to_underscores => true,
-      :scrub_xml                     => true,
-      :parser                        => :nokogiri
+      :strip_namespaces               => false,
+      :delete_namespace_attributes    => false,
+      :convert_tags_to                => nil,
+      :convert_attributes_to          => nil,
+      :empty_tag_value                => nil,
+      :advanced_typecasting           => true,
+      :convert_dashes_to_underscores  => true,
+      :scrub_xml                      => true,
+      :strip_attributes_of_empty_tags => false,
+      :parser                         => :nokogiri
     }
 
     validate_options! defaults.keys, options.keys

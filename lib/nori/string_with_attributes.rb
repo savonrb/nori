@@ -3,5 +3,9 @@ class Nori
 
     attr_accessor :attributes
 
+    def as_json
+      to_s
+    end
+
   end
 end

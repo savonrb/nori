@@ -12,6 +12,20 @@
 # 2.5.0 (2015-03-31)
 
 * Formally drop support for ruby 1.8.7. Installing Nori from rubygems for that version should no longer attempt to install versions that will not work.
+* BREAKING CHANGE: Newlines are now preserved when present in the value of inner text nodes. See the example below:
+
+before:
+
+```
+Nori.new.parse("<outer>\n&lt;embedded&gt;\n&lt;one&gt;&lt;/one&gt;\n&lt;two&gt;&lt;/two&gt;\n&lt;embedded&gt;\n</outer>")
+=> {"outer"=>"<embedded><one></one><two></two><embedded>"}
+```
+
+after:
+```
+Nori.new.parse("<outer>\n&lt;embedded&gt;\n&lt;one&gt;&lt;/one&gt;\n&lt;two&gt;&lt;/two&gt;\n&lt;embedded&gt;\n</outer>")
+=> {"outer"=>"<embedded>\n<one></one>\n<two></two>\n<embedded>\n"}
+```
 
 # 2.4.0 (2014-04-19)
 

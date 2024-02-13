@@ -1,3 +1,7 @@
+# Unreleased
+
+* Added support for ruby 3.1, 3.2, 3.3. Dropped support for ruby 2.7 and below.
+
 # 2.6.0 (2015-05-06)
 
 * Feature: [#69](https://github.com/savonrb/nori/pull/69) Add option to convert empty tags to a value other than nil.

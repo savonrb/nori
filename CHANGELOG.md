@@ -1,6 +1,9 @@
-# Unreleased
+# 2.7.0 (2024-02-13)
 
 * Added support for ruby 3.1, 3.2, 3.3. Dropped support for ruby 2.7 and below.
+* Feature: `Nori::Parser` has a new option, `:scrub_xml`, which defaults to true, for scrubbing invalid characters ([#72](https://github.com/savonrb/nori/pull/72)). This should allow documents containing invalid characters to still be parsed.
+* Fix: REXML parser changes `&lt;` inside CDATA to `<` ([#94](https://github.com/savonrb/nori/pull/94))
+* Change: `Object#blank?` is no longer patched in.
 
 # 2.6.0 (2015-05-06)
 

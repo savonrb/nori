@@ -10,13 +10,17 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/savonrb/nori"
   s.summary     = "XML to Hash translator"
   s.description = s.summary
-  s.required_ruby_version = '>= 1.9.2'
+  s.required_ruby_version = '>= 3.0'
 
   s.license = "MIT"
+
+  s.add_dependency "bigdecimal"
 
   s.add_development_dependency "rake",     "~> 12.3.3"
   s.add_development_dependency "nokogiri", ">= 1.4.0"
   s.add_development_dependency "rspec",    "~> 3.11.0"
+
+  s.metadata["rubygems_mfa_required"] = "true"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

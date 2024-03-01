@@ -27,7 +27,7 @@ class Nori
       #     #=> 'one="1" two="TWO"'
       def to_xml_attributes
         map do |k, v|
-          %{#{k.to_s.snakecase.sub(/^(.{1,1})/) { |m| m.downcase }}="#{v}"}
+          %{#{StringUtils.snakecase(k.to_s).sub(/^(.{1,1})/) { |m| m.downcase }}="#{v}"}
         end.join(' ')
       end
 

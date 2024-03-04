@@ -640,6 +640,10 @@ describe Nori do
         expect(parse(' ')).to eq({})
       end
 
+      it "handle incorrect xml string" do
+        incorrect_xml = "<?xml version=\"1.0\" encoding=\"utf-8\">\n<request>\n <opcode>0</opcode>\n</request>\n"
+        expect { parse(incorrect_xml) }.to raise_error(ArgumentError, /Parsing error/)
+      end
     end
   end
 

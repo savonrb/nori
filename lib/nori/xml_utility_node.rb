@@ -170,7 +170,9 @@ class Nori
               out.merge!( k => v.map{|e| e.to_hash[k]})
             end
           end
-          out.merge! prefixed_attributes unless attributes.empty?
+          if !(@options[:strip_attributes_of_empty_tags] && @children.empty?) && attributes.any?
+            out.merge! prefixed_attributes
+          end
           out = out.empty? ? @options[:empty_tag_value] : out
         end
 

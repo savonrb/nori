@@ -15,7 +15,11 @@ class Nori
         parser = ::REXML::Parsers::BaseParser.new(xml)
 
         while true
-          raw_data = parser.pull
+          begin
+            raw_data = parser.pull
+          rescue ::REXML::ParseException => error
+            raise Nori::ParseError, error.message
+          end
           event = unnormalize(raw_data)
           case event[0]
           when :end_document

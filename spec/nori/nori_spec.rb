@@ -640,6 +640,53 @@ describe Nori do
         expect(parse(' ')).to eq({})
       end
 
+      context "with strip_attributes_of_empty_tags set to true" do
+        it "should strip attributes of empty tags" do
+          expect(parse('<foo bar="" />', strip_attributes_of_empty_tags: true)).to eq({ 'foo' => nil })
+        end
+
+        it "should strip attributes only of empty tags also in a nested structure" do
+          xml = <<-XML
+            <content>
+              <foo />
+              <foo bar="baz" />
+              <foo bar="baz" bar2="baz2"></foo>
+              <foo bar="baz">actual content</foo>
+            </content>
+          XML
+
+          expect(parse(xml, strip_attributes_of_empty_tags: true)).to match({
+            "content" => {
+              "foo" => [nil, nil, nil, be_a(Nori::StringWithAttributes).and(eq("actual content"))],
+            }
+          })
+        end
+      end
+
+      context "with strip_attributes_of_empty_tags set to false" do
+        it "should not strip any attributes" do
+          xml = <<-XML
+            <content>
+              <foo />
+              <foo bar="baz" />
+              <foo bar="baz" bar2="baz2"></foo>
+              <foo bar="baz">actual content</foo>
+            </content>
+          XML
+
+          expect(parse(xml, strip_attributes_of_empty_tags: false)).to match({
+            "content" => {
+              "foo" => [
+                nil,
+                {"@bar"=>"baz"},
+                {"@bar"=>"baz", "@bar2"=>"baz2"},
+                be_a(Nori::StringWithAttributes).and(eq("actual content"))
+              ],
+            }
+          })
+        end
+      end
+
     end
   end
 

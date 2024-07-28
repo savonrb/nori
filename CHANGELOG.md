@@ -1,3 +1,7 @@
+# 2.7.1 (2024-07-28)
+
+* Stop monkey-patching String with #snakecase by @mchu in https://github.com/savonrb/nori/pull/102
+
 # 2.7.0 (2024-02-13)
 
 * Added support for ruby 3.1, 3.2, 3.3. Dropped support for ruby 2.7 and below.

@@ -22,8 +22,6 @@ Gem::Specification.new do |s|
 
   s.metadata["rubygems_mfa_required"] = "true"
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files = `git ls-files lib`.split($/) + ["CHANGELOG.md", "LICENSE", "README.md"]
   s.require_paths = ["lib"]
 end

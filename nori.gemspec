@@ -15,8 +15,9 @@ Gem::Specification.new do |s|
   s.license = "MIT"
 
   s.add_dependency "bigdecimal"
+  s.add_dependency "stringio"
 
-  s.add_development_dependency "rake",     "~> 12.3.3"
+  s.add_development_dependency "rake",     "~> 13.3"
   s.add_development_dependency "nokogiri", ">= 1.4.0"
   s.add_development_dependency "rspec",    "~> 3.11.0"
 

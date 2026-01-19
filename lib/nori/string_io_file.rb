@@ -1,3 +1,5 @@
+require "stringio"
+
 class Nori
   class StringIOFile < StringIO
 

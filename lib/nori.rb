@@ -20,6 +20,7 @@ class Nori
       :convert_tags_to               => nil,
       :convert_attributes_to         => nil,
       :empty_tag_value               => nil,
+      :consistent_empty_tags         => false,
       :advanced_typecasting          => true,
       :convert_dashes_to_underscores => true,
       :scrub_xml                     => true,

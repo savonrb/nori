@@ -107,3 +107,48 @@ parser = Nori.new(:convert_dashes_to_underscores => false)
 parser.parse('<any-tag>foo bar</any-tag>')
 # => {"any-tag"=>"foo bar"}
 ```
+
+## empty_tag_value
+
+By default, an empty tag becomes `nil`. The `empty_tag_value` option replaces that value.
+
+```ruby
+Nori.new.parse('<foo/>')
+# => {"foo"=>nil}
+
+Nori.new(:empty_tag_value => "").parse('<foo/>')
+# => {"foo"=>""}
+```
+
+The option does not apply to empty tags with attributes.
+They become a hash of their prefixed attributes instead.
+
+```ruby
+Nori.new(:empty_tag_value => "").parse('<foo bar="baz"/>')
+# => {"foo"=>{"@bar"=>"baz"}}
+```
+
+## consistent_empty_tags
+
+With `consistent_empty_tags`, every empty tag (with or without attributes) becomes the `empty_tag_value`.
+
+```ruby
+Nori.new(:consistent_empty_tags => true).parse('<foo bar="baz"/>')
+# => {"foo"=>nil}
+```
+
+A string `empty_tag_value` keeps the attributes accessible on the value,
+and an explicit `xsi:nil="true"` always becomes `nil`.
+
+```ruby
+parser = Nori.new(:consistent_empty_tags => true, :empty_tag_value => "")
+
+result = parser.parse('<foo bar="baz"/>')
+# => {"foo"=>""}
+
+result["foo"].attributes
+# => {"bar"=>"baz"}
+
+parser.parse('<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>')
+# => {"foo"=>nil}
+```

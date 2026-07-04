@@ -661,6 +661,69 @@ describe Nori do
         end
       end
 
+      context "empty tags with :consistent_empty_tags" do
+
+        it "returns :empty_tag_value for an empty tag with attributes" do
+          expect(parse('<foo bar="baz"/>', :consistent_empty_tags => true)).to eq("foo" => nil)
+        end
+
+        it "returns :empty_tag_value for a whitespace-only tag with attributes" do
+          expect(parse('<foo bar="baz">   </foo>', :consistent_empty_tags => true)).to eq("foo" => nil)
+        end
+
+        it "returns :empty_tag_value for an empty tag without attributes" do
+          expect(parse('<foo/>', :consistent_empty_tags => true)).to eq("foo" => nil)
+        end
+
+        context "and :empty_tag_value set to an empty string" do
+
+          it "returns the string for an empty tag without attributes" do
+            expect(parse_consistent("<foo/>")).to eq("foo" => "")
+          end
+
+          it "attaches the attributes of an empty tag to the string" do
+            value = parse_consistent('<foo bar="baz"/>')["foo"]
+            expect(value).to eq("")
+            expect(value).to be_a(Nori::StringWithAttributes)
+            expect(value.attributes).to eq("bar" => "baz")
+          end
+
+          it "attaches the attributes of a whitespace-only tag to the string" do
+            value = parse_consistent('<foo bar="baz">   </foo>')["foo"]
+            expect(value).to eq("")
+            expect(value.attributes).to eq("bar" => "baz")
+          end
+
+          it "returns nil for an explicit xsi:nil" do
+            xml = '<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+            expect(parse_consistent(xml)).to eq("foo" => nil)
+          end
+
+          it "returns nil for an explicit xsi:nil combined with other attributes" do
+            xml = '<foo xsi:nil="true" bar="baz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+            expect(parse_consistent(xml)).to eq("foo" => nil)
+          end
+
+          it "does not change tags with text" do
+            expect(parse_consistent("<foo>text</foo>")).to eq("foo" => "text")
+          end
+
+          it "does not change tags with children" do
+            # the attribute would be lost if the empty-tag rule also covered elements with children
+            xml = '<foo bar="baz"><child>x</child></foo>'
+            expect(parse_consistent(xml)).to eq("foo" => { "@bar" => "baz", "child" => "x" })
+          end
+
+          it "does not change empty tags typed as array" do
+            expect(parse_consistent('<foo type="array"/>')).to eq("foo" => [])
+          end
+
+          def parse_consistent(xml)
+            parse(xml, :consistent_empty_tags => true, :empty_tag_value => "")
+          end
+        end
+      end
+
     end
   end
 

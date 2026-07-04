@@ -252,6 +252,8 @@ class Nori
     # Folds the child nodes and the prefixed attributes into a hash.
     # An empty result becomes the :empty_tag_value option.
     def hash_value(groups)
+      return consistent_empty_value if @options[:consistent_empty_tags] && groups.empty?
+
       value = {}
       groups.each do |child_name, nodes|
         if nodes.size == 1
@@ -262,6 +264,18 @@ class Nori
       end
       value.merge!(prefixed_attributes) unless attributes.empty?
       value.empty? ? @options[:empty_tag_value] : value
+    end
+
+    # Resolves an element without children and without text when the
+    # :consistent_empty_tags option is set. The element becomes the
+    # :empty_tag_value option no matter which attributes it carries.
+    # A string value keeps the attributes accessible on the value.
+    # An explicit xsi:nil="true" wins over the option and becomes nil.
+    def consistent_empty_value
+      return nil if @nil_element
+
+      value = @options[:empty_tag_value]
+      value.is_a?(String) ? string_with_attributes(value) : value
     end
 
     # Wraps a string value so the node's attributes stay accessible

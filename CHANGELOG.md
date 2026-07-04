@@ -1,3 +1,7 @@
+# Unreleased
+
+* Feature: [#97](https://github.com/savonrb/nori/issues/97) Add the `:consistent_empty_tags` option ([#109](https://github.com/savonrb/nori/pull/109)). When enabled, every empty tag becomes the `:empty_tag_value`, whether it has attributes or not. A string value keeps the attributes accessible via `#attributes`, and an explicit `xsi:nil="true"` always becomes `nil`. Reported by @lukasbischof, who also proposed a fix in [#98](https://github.com/savonrb/nori/pull/98). Thanks to @md5 for surfacing another instance of it and pinpointing the cause.
+
 # 2.7.1 (2024-07-28)
 
 * Stop monkey-patching String with #snakecase by @mchu in https://github.com/savonrb/nori/pull/102

@@ -130,12 +130,15 @@ class Nori
     # Converts the node into a hash with the node name as its single key.
     #
     # The value depends on the shape of the node. A node typed as "file"
-    # becomes a {StringIOFile}. A node with text content becomes a typecast
-    # scalar. Every other node folds its children into an array or a hash.
+    # becomes a {StringIOFile}, unless the +:serializable+ profile is enabled.
+    # That profile returns plain data only, so a file node folds into text and
+    # attributes like any other node and the base64 content is left undecoded.
+    # A node with text content becomes a typecast scalar. Every other node
+    # folds its children into an array or a hash.
     #
     # @return [Hash{String => Object}] the node name mapped to its value
     def to_hash
-      return { name => file_value } if @type == "file"
+      return { name => file_value } if @type == "file" && !@options[:serializable]
       return { name => text_value } if @text
 
       groups = group_children

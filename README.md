@@ -192,7 +192,7 @@ Members of the profile:
 ## serializable
 
 `serializable` is a profile that makes Nori return plain, directly-serializable
-data with no custom `String` subclass. It is opt-in on the 2.x line and will
+data with no custom value classes. It is opt-in on the 2.x line and will
 probably become the default in 3.0.
 
 ```ruby
@@ -214,4 +214,17 @@ Members of the profile:
 
   Nori.new(:serializable => true).parse('<foo>Content</foo>')
   # => {"foo"=>"Content"}
+  ```
+
+- **`type="file"` nodes are not decoded.** Without the profile, a node carrying
+  `type="file"` is base64-decoded into a `Nori::StringIOFile` with its filename
+  and content type. The profile skips that. The node folds into text and
+  attributes like any other, leaving the base64 content as a plain `String` for
+  the caller to decode. This `type=` decoding is a Rails/ActiveSupport
+  `Hash.from_xml` convention Nori inherited through crack and merb, not part of
+  any XML specification, so the plain-data profile leaves it behind.
+
+  ```ruby
+  Nori.new(:serializable => true).parse('<doc type="file" name="x.pdf">aGVsbG8=</doc>')
+  # => {"doc"=>{"#text"=>"aGVsbG8=", "@type"=>"file", "@name"=>"x.pdf"}}
   ```

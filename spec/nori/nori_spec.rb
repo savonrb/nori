@@ -270,6 +270,42 @@ describe Nori do
           expect(result).to be_a(Nori::StringWithAttributes)
           expect(result.attributes).to eq("attr" => "value")
         end
+
+        it "returns an empty tag with attributes as a hash" do
+          options = { :serializable => true, :consistent_empty_tags => true, :empty_tag_value => "" }
+          expect(parse('<foo bar="baz"/>', options)).to eq(
+            "foo" => { "#text" => "", "@bar" => "baz" }
+          )
+        end
+
+        it "keeps CDATA text as plain data, never a StringWithAttributes" do
+          with_attr = parse('<foo bar="baz"><![CDATA[hello]]></foo>', :serializable => true)["foo"]
+          without_attr = parse('<foo><![CDATA[hello]]></foo>', :serializable => true)["foo"]
+
+          expect(with_attr).to eq("#text" => "hello", "@bar" => "baz")
+          expect(without_attr).to eq("hello")
+          expect(without_attr).to be_an_instance_of(String)
+        end
+
+        it "does not decode a type=\"file\" node, returning plain data" do
+          xml = '<doc type="file" name="x.pdf" content_type="application/pdf">aGVsbG8=</doc>'
+          result = parse(xml, :serializable => true)["doc"]
+
+          expect(result).to eq(
+            "#text" => "aGVsbG8=", "@type" => "file", "@name" => "x.pdf", "@content_type" => "application/pdf"
+          )
+          expect(result).not_to be_a(Nori::StringIOFile)
+        end
+
+        it "still decodes a type=\"file\" node into a StringIOFile when the profile is off" do
+          xml = '<doc type="file" name="x.pdf" content_type="application/pdf">aGVsbG8=</doc>'
+          result = parse(xml)["doc"]
+
+          expect(result).to be_a(Nori::StringIOFile)
+          expect(result.read).to eq("hello")
+          expect(result.original_filename).to eq("x.pdf")
+          expect(result.content_type).to eq("application/pdf")
+        end
       end
 
       it "should typecast an integer" do

@@ -824,6 +824,32 @@ describe Nori do
         end
       end
 
+      context "whitespace via character references" do
+        # XML 1.0 §4.4.2: a character reference is replaced by its character and
+        # processed as ordinary character data. Unlike a CDATA section it is not
+        # a literal-data marker, so &#32; is equivalent to a plain space and
+        # follows the whitespace rules of the active mode.
+
+        it "strips whitespace-only character references like literal whitespace" do
+          expect(parse("<foo>&#32;</foo>")).to eq("foo" => nil)
+          expect(parse("<foo>&#x20;</foo>")).to eq("foo" => nil)
+          expect(parse("<foo>&#9;&#10;</foo>")).to eq("foo" => nil)
+        end
+
+        it "resolves character references inside mixed text" do
+          expect(parse("<foo>a&#32;b</foo>")).to eq("foo" => "a b")
+        end
+
+        it "treats whitespace-only character references as an empty tag under :standards" do
+          expect(parse("<foo>&#32;</foo>", :standards => true)).to eq("foo" => "")
+        end
+
+        it "keeps whitespace-only character references under xml:space=\"preserve\"" do
+          value = parse('<foo xml:space="preserve">&#32;&#9;</foo>', :standards => true)["foo"]
+          expect(value).to eq(" \t")
+        end
+      end
+
       context "the :standards profile" do
         # `standards: true` is a profile. It turns on the spec-correct behaviors as a group.
 

@@ -32,7 +32,9 @@ class Nori
           when :text
             stack.last.add_node(event[1]) unless event[1].strip.length == 0 || stack.empty?
           when :cdata
-            stack.last.add_node(raw_data[1]) unless raw_data[1].strip.length == 0 || stack.empty?
+            # CDATA is the author's explicit literal-data marker (XML 1.0 §2.7),
+            # so whitespace-only CDATA is kept rather than stripped like text.
+            stack.last.add_node(raw_data[1]) unless stack.empty?
           end
         end
         stack.length > 0 ? stack.pop.to_hash : {}

@@ -9,6 +9,15 @@ class Nori
     module Nokogiri
 
       class Document < ::Nokogiri::XML::SAX::Document
+        # Marks a text node that came from a CDATA section so the whitespace
+        # stripping in {#end_element} and {#characters} leaves it alone.
+        # A CDATA section is the author's explicit literal-data marker
+        # (XML 1.0 §2.7), so its content is real even when it is only
+        # whitespace and is never trimmed. The marker never reaches the
+        # output because {XMLUtilityNode#inner_html} joins children into
+        # a plain string.
+        class CDataText < ::String; end
+
         attr_accessor :options
 
         def stack
@@ -20,12 +29,13 @@ class Nori
         end
 
         # To keep backward behaviour compatibility
-        # delete last child if it is a space-only text node
+        # delete last child if it is a space-only text node.
+        # CDATA content is literal and is never stripped.
         def end_element(name)
           if stack.size > 1
             last = stack.pop
             maybe_string = last.children.last
-            if maybe_string.is_a?(String) and maybe_string.strip.empty?
+            if maybe_string.is_a?(String) and !maybe_string.is_a?(CDataText) and maybe_string.strip.empty?
               last.children.pop
             end
             stack.last.add_node last
@@ -42,7 +52,11 @@ class Nori
           end
         end
 
-        alias cdata_block characters
+        # Adds the CDATA section content verbatim.
+        def cdata_block(string)
+          last = stack.last
+          last.add_node(CDataText.new(string)) if last
+        end
 
       end
 

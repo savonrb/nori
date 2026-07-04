@@ -1,5 +1,7 @@
 # Unreleased
 
+* Fix: Whitespace-only CDATA content is no longer stripped. A `<![CDATA[   ]]>` section is the author's explicit literal-data marker, so its content is now preserved as text instead of being dropped, on both the Nokogiri and REXML parsers. Previously such a tag parsed to `nil` (or, with attributes, dropped the content and kept only the attributes). Non-whitespace CDATA is unchanged, and ordinary whitespace-only text is still stripped as before. Surfaced while auditing whitespace handling for [#97](https://github.com/savonrb/nori/issues/97), the same empty-tag/whitespace spec-compliance work as the `:consistent_empty_tags` option above.
+
 * Feature: [#97](https://github.com/savonrb/nori/issues/97) Add the `:consistent_empty_tags` option ([#109](https://github.com/savonrb/nori/pull/109)). When enabled, every empty tag becomes the `:empty_tag_value`, whether it has attributes or not. A string value keeps the attributes accessible via `#attributes`, and an explicit `xsi:nil="true"` always becomes `nil`. Reported by @lukasbischof, who also proposed a fix in [#98](https://github.com/savonrb/nori/pull/98). Thanks to @md5 for surfacing another instance of it and pinpointing the cause.
 
 # 2.7.1 (2024-07-28)

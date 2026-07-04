@@ -724,6 +724,31 @@ describe Nori do
         end
       end
 
+      context "whitespace-only CDATA content" do
+        it "keeps whitespace-only CDATA instead of stripping it to nil" do
+          expect(parse('<foo><![CDATA[   ]]></foo>')).to eq("foo" => "   ")
+        end
+
+        it "attaches the attributes of a whitespace-only CDATA tag to the string" do
+          value = parse('<foo bar="baz"><![CDATA[   ]]></foo>')["foo"]
+          expect(value).to eq("   ")
+          expect(value).to be_a(Nori::StringWithAttributes)
+          expect(value.attributes).to eq("bar" => "baz")
+        end
+
+        it "keeps CDATA whitespace adjacent to text" do
+          expect(parse('<foo>text<![CDATA[  ]]></foo>')).to eq("foo" => "text  ")
+        end
+
+        it "still strips whitespace-only plain text to an empty tag" do
+          expect(parse('<foo>   </foo>')).to eq("foo" => nil)
+        end
+
+        it "still returns non-whitespace CDATA content unchanged" do
+          expect(parse('<foo><![CDATA[hi]]></foo>')).to eq("foo" => "hi")
+        end
+      end
+
     end
   end
 

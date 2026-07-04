@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Add the `:standards` profile option. `Nori.new(standards: true)` turns on Nori's spec-correct parsing as a group rather than one flag at a time. Its first members are xml:space honoring (whitespace-only text under `xml:space="preserve"` is kept instead of stripped, with inheritance and `xml:space="default"` reset per [XML 1.0 §2.10](https://www.w3.org/TR/xml/#sec-white-space)) and the XML string-value model for empty elements (implies `:consistent_empty_tags` with an empty-string `:empty_tag_value`, both still overridable). Opt-in on the 2.x line, default in 3.0. Thanks to @md5 for raising the `xml:space="preserve"` case on [#97](https://github.com/savonrb/nori/issues/97).
+
 * [#97](https://github.com/savonrb/nori/issues/97) Add the `:consistent_empty_tags` option ([#109](https://github.com/savonrb/nori/pull/109)). When enabled, every empty tag becomes the `:empty_tag_value`, whether it has attributes or not. A string value keeps the attributes accessible via `#attributes`, and an explicit `xsi:nil="true"` always becomes `nil`. Reported by @lukasbischof, who also proposed a fix in [#98](https://github.com/savonrb/nori/pull/98). Thanks to @md5 for surfacing another instance of it and pinpointing the cause.
 
 ### Fixed

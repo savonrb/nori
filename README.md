@@ -152,3 +152,34 @@ result["foo"].attributes
 parser.parse('<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>')
 # => {"foo"=>nil}
 ```
+
+## standards
+
+`standards` is a profile that turns on Nori's spec-correct parsing as a group,
+rather than one flag at a time. It is opt-in on the 2.x line and becomes the
+default in Nori 3.0.
+
+```ruby
+Nori.new(:standards => true)
+```
+
+Members of the profile:
+
+- **xml:space honoring** ([XML 1.0 §2.10](https://www.w3.org/TR/xml/#sec-white-space)).
+  Whitespace-only text under `xml:space="preserve"` is kept instead of stripped.
+  The nearest ancestor that sets `xml:space` wins, and `xml:space="default"`
+  resets to the stripping behavior.
+
+  ```ruby
+  Nori.new(:standards => true).parse('<name xml:space="preserve">   </name>')
+  # => {"name"=>"   "}
+  ```
+
+- **the XML string-value model for empty elements.** The profile implies
+  `consistent_empty_tags: true` with `empty_tag_value: ""`. Both remain
+  overridable, so passing either option explicitly wins over the profile.
+
+  ```ruby
+  Nori.new(:standards => true).parse('<foo bar="baz"/>')
+  # => {"foo"=>""}
+  ```

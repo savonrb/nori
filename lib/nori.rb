@@ -24,11 +24,12 @@ class Nori
       :advanced_typecasting          => true,
       :convert_dashes_to_underscores => true,
       :scrub_xml                     => true,
+      :standards                     => false,
       :parser                        => :nokogiri
     }
 
     validate_options! defaults.keys, options.keys
-    @options = defaults.merge(options)
+    @options = defaults.merge(standards_defaults(options)).merge(options)
   end
 
   def find(hash, *path)
@@ -50,6 +51,24 @@ class Nori
   end
 
   private
+
+  # The defaults implied by the +:standards+ profile.
+  #
+  # The profile groups the spec-correct behaviors under a single opt-in.
+  # It turns on the XML string-value model for empty elements
+  # (+:consistent_empty_tags+ with an empty-string +:empty_tag_value+) and,
+  # in the parsers, xml:space honoring. These are defaults, so an explicit
+  # +:consistent_empty_tags+ or +:empty_tag_value+ passed by the caller
+  # still wins. When the profile is off the hash is empty and parsing is
+  # unchanged.
+  #
+  # @param options [Hash] the options passed to {#initialize}
+  # @return [Hash] the implied defaults, or +{}+ when the profile is off
+  def standards_defaults(options)
+    return {} unless options[:standards]
+    { :consistent_empty_tags => true, :empty_tag_value => "" }
+  end
+
   def load_parser(parser)
     require "nori/parser/#{parser}"
     Parser.const_get PARSERS[parser]

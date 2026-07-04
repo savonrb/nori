@@ -749,6 +749,56 @@ describe Nori do
         end
       end
 
+      context "the :standards profile" do
+        # `standards: true` is a profile. It turns on the spec-correct behaviors as a group.
+
+        it "implies :consistent_empty_tags with an empty-string :empty_tag_value" do
+          expect(parse("<foo/>", :standards => true)).to eq("foo" => "")
+          value = parse('<foo bar="baz"/>', :standards => true)["foo"]
+          expect(value).to eq("")
+          expect(value).to be_a(Nori::StringWithAttributes)
+          expect(value.attributes).to eq("bar" => "baz")
+        end
+
+        it "lets an explicit :empty_tag_value override the profile default" do
+          expect(parse("<foo/>", :standards => true, :empty_tag_value => nil)).to eq("foo" => nil)
+        end
+
+        it "lets an explicit :consistent_empty_tags override the profile default" do
+          # without the override the profile would collapse this to ""
+          expect(parse('<foo bar="baz"/>', :standards => true, :consistent_empty_tags => false)).
+            to eq("foo" => { "@bar" => "baz" })
+        end
+
+        it "does not change parsing when it is off (the default)" do
+          expect(parse("<foo/>")).to eq("foo" => nil)
+        end
+
+        context "xml:space honoring" do
+          # XML 1.0 §2.10: xml:space="preserve" makes whitespace significant.
+          # The nearest ancestor that sets it wins and "default" resets it.
+
+          it "keeps whitespace-only text under xml:space=\"preserve\"" do
+            value = parse('<foo xml:space="preserve">   </foo>', :standards => true)["foo"]
+            expect(value).to eq("   ")
+            expect(value).to be_a(Nori::StringWithAttributes)
+            expect(value.attributes).to eq("xml:space" => "preserve")
+          end
+
+          it "inherits preserve to descendants and resets it on xml:space=\"default\"" do
+            xml = '<r xml:space="preserve"><keep>  </keep><reset xml:space="default">  </reset></r>'
+            result = parse(xml, :standards => true)["r"]
+            # both children hold whitespace-only text
+            expect(result["keep"]).to eq("  ")
+            expect(result["reset"]).to eq("")
+          end
+
+          it "still strips whitespace under xml:space=\"preserve\" when the profile is off" do
+            expect(parse('<foo xml:space="preserve">   </foo>')).to eq("foo" => { "@xml:space" => "preserve" })
+          end
+        end
+      end
+
     end
   end
 

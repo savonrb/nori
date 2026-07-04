@@ -640,6 +640,27 @@ describe Nori do
         expect(parse(' ')).to eq({})
       end
 
+      context "empty tags with the default options" do
+
+        it "returns the prefixed attributes for a whitespace-only tag with attributes" do
+          expect(parse('<foo bar="baz">   </foo>')).to eq("foo" => { "@bar" => "baz" })
+        end
+
+        it "returns the prefixed attributes when xsi:nil is combined with other attributes" do
+          xml = '<foo xsi:nil="true" bar="baz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+          expect(parse(xml)).to eq("foo" => { "@bar" => "baz" })
+        end
+
+        it "ignores :empty_tag_value for an empty tag with attributes" do
+          expect(parse('<foo bar="baz"/>', :empty_tag_value => "")).to eq("foo" => { "@bar" => "baz" })
+        end
+
+        it "applies :empty_tag_value to an empty tag with an explicit xsi:nil" do
+          xml = '<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+          expect(parse(xml, :empty_tag_value => "")).to eq("foo" => "")
+        end
+      end
+
     end
   end
 

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+* Add the `:serializable` profile option. `Nori.new(serializable: true)` returns plain, directly-serializable data with no custom `String` subclass. A text node that also has attributes becomes a Hash in the XML JSON convention (`{"#text" => content}` merged with our existing `@`-prefixed attributes) instead of a `Nori::StringWithAttributes`, and a text node without attributes becomes a plain `String`. With this, attributes survive `to_json`, `to_yaml`, and `Marshal`. Opt-in on the 2.x line, probably the default in Nori 3.0. Reported by @ArnoldMEDLINQ ([#107](https://github.com/savonrb/nori/issues/107)), thanks to @dub357 for pinpointing the cause and finding [#106](https://github.com/savonrb/nori/pull/106), and thanks to @ekzobrain whose hash-shape approach this builds on.
+
 ## [2.8.0] - 2026-07-04
 
 ### Added
@@ -255,4 +261,5 @@ Please make sure to read the updated README for how to use the new version.
 ## 0.1.0 2009-03-28
 * Initial release.
 
-[2.8.0]: https://github.com/savonrb/nori/compare/v2.7.1...2.8.0
+[Unreleased]: https://github.com/savonrb/nori/compare/v2.8.0...main
+[2.8.0]: https://github.com/savonrb/nori/compare/v2.7.1...v2.8.0

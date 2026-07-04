@@ -25,6 +25,7 @@ class Nori
       :convert_dashes_to_underscores => true,
       :scrub_xml                     => true,
       :standards                     => false,
+      :serializable                  => false,
       :parser                        => :nokogiri
     }
 

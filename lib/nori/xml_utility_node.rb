@@ -278,12 +278,38 @@ class Nori
       value.is_a?(String) ? string_with_attributes(value) : value
     end
 
-    # Wraps a string value so the node's attributes stay accessible
-    # through {StringWithAttributes#attributes}.
+    # Combines a string +value+ with the node's attributes in the shape the
+    # active output profile calls for.
+    #
+    # By default the value is a {StringWithAttributes}: a String carrying the
+    # node's attributes on {StringWithAttributes#attributes}. Under the
+    # +:serializable+ profile the value becomes plain, directly-serializable
+    # data instead, so no custom String subclass is returned.
+    #
+    # @param value [String] the typecast text content of the node
+    # @return [StringWithAttributes, Hash{String => String}, String] the value
+    #   in the configured representation
     def string_with_attributes(value)
+      return serializable_value(value) if @options[:serializable]
+
       string = StringWithAttributes.new(value)
       string.attributes = attributes
       string
+    end
+
+    # The +:serializable+ representation of a string +value+ and the node's
+    # attributes. A node with attributes maps to the XML JSON convention
+    # (+{"#text" => value}+ merged with the "@"-prefixed attributes) and a
+    # node without attributes maps to the plain String. The attribute keys go
+    # through the same prefixing and tag conversion as element-node attributes
+    # ({#prefixed_attributes}), so every node kind shares one convention.
+    #
+    # @param value [String] the typecast text content of the node
+    # @return [Hash{String => String}, String] the hash shape when the node
+    #   has attributes, otherwise the plain +value+
+    def serializable_value(value)
+      return value if attributes.empty?
+      { "#text" => value }.merge(prefixed_attributes)
     end
 
     def try_to_convert(value, &block)

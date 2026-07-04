@@ -50,6 +50,11 @@ result["foo"].attributes
 # => {"bar"=>"baz"}
 ```
 
+Because `StringWithAttributes` hides the attributes on an accessor, they are
+lost on a plain `to_json` and callers have to type-check each value. The
+[`serializable`](#serializable) profile returns a plain Hash instead and will
+probably be the default in 3.0.
+
 ## advanced_typecasting
 
 Nori can automatically convert string values to `TrueClass`, `FalseClass`, `Time`, `Date`, and `DateTime`:
@@ -182,4 +187,31 @@ Members of the profile:
   ```ruby
   Nori.new(:standards => true).parse('<foo bar="baz"/>')
   # => {"foo"=>""}
+  ```
+
+## serializable
+
+`serializable` is a profile that makes Nori return plain, directly-serializable
+data with no custom `String` subclass. It is opt-in on the 2.x line and will
+probably become the default in 3.0.
+
+```ruby
+Nori.new(:serializable => true)
+```
+
+Members of the profile:
+
+- **text nodes with attributes become a Hash.** A tag with both text content
+  and attributes maps to the XML JSON convention (`{"#text" => content}` merged
+  with the `@`-prefixed attributes) instead of a `Nori::StringWithAttributes`.
+  This is the same `@`-keyed shape element nodes already use, so the attributes
+  survive `to_json`, `to_yaml`, and `Marshal`. A text node without attributes
+  stays a plain `String`.
+
+  ```ruby
+  Nori.new(:serializable => true).parse('<foo bar="baz">Content</foo>')
+  # => {"foo"=>{"#text"=>"Content", "@bar"=>"baz"}}
+
+  Nori.new(:serializable => true).parse('<foo>Content</foo>')
+  # => {"foo"=>"Content"}
   ```

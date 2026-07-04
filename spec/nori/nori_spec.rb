@@ -233,6 +233,45 @@ describe Nori do
         end
       end
 
+      context "with the :serializable profile" do
+        it "returns a text node with attributes as a plain hash" do
+          xml = '<test attr="value" attr1="value1">Text</test>'
+          expect(parse(xml, :serializable => true)).to eq(
+            "test" => { "#text" => "Text", "@attr" => "value", "@attr1" => "value1" }
+          )
+        end
+
+        it "returns a text node without attributes as a plain String" do
+          xml =<<-XML
+            <opt>
+              <user login="grep">Gary R Epstein</user>
+              <user>Simon T Tyson</user>
+            </opt>
+          XML
+          data = parse(xml, :serializable => true)
+
+          expect(data["opt"]["user"][0]).to eq("#text" => "Gary R Epstein", "@login" => "grep")
+          expect(data["opt"]["user"][1]).to eq("Simon T Tyson")
+          expect(data["opt"]["user"][1]).to be_an_instance_of(String)
+          expect(data["opt"]["user"][1]).not_to respond_to(:attributes)
+        end
+
+        it "applies :convert_tags_to to the attribute keys, matching element-node attributes" do
+          xml = '<test attr="value">Text</test>'
+          expect(parse(xml, :serializable => true, :convert_tags_to => :upcase.to_proc)).to eq(
+            "TEST" => { "#text" => "Text", "@ATTR" => "value" }
+          )
+        end
+
+        it "leaves the default (profile off) output as a StringWithAttributes" do
+          result = parse('<test attr="value">Text</test>')["test"]
+
+          expect(result).to eq("Text")
+          expect(result).to be_a(Nori::StringWithAttributes)
+          expect(result.attributes).to eq("attr" => "value")
+        end
+      end
+
       it "should typecast an integer" do
         xml = "<tag type='integer'>10</tag>"
         expect(parse(xml)['tag']).to eq(10)

@@ -20,6 +20,19 @@ jobs:
       - name: Audit Ruby runtime
         run: gem install ruby_audit --quiet && gem exec ruby_audit check
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@9eb537ca036ebaed86729dcb9309076e4c5c3b74 # v1.314.0
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      - name: RuboCop
+        run: bundle exec rubocop --format github
+
   build:
     runs-on: ubuntu-latest
     

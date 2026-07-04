@@ -1,0 +1,13 @@
+inherit_from: .rubocop_todo.yml
+
+plugins:
+  - rubocop-rake
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.0
+  SuggestExtensions: false
+  NewCops: disable
+
+RSpec/ContextWording:
+  Enabled: false

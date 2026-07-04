@@ -127,59 +127,21 @@ class Nori
       @children << node
     end
 
+    # Converts the node into a hash with the node name as its single key.
+    #
+    # The value depends on the shape of the node. A node typed as "file"
+    # becomes a {StringIOFile}. A node with text content becomes a typecast
+    # scalar. Every other node folds its children into an array or a hash.
+    #
+    # @return [Hash{String => Object}] the node name mapped to its value
     def to_hash
-      if @type == "file"
-        f = StringIOFile.new((@children.first || '').unpack('m').first)
-        f.original_filename = attributes['name'] || 'untitled'
-        f.content_type = attributes['content_type'] || 'application/octet-stream'
-        return { name => f }
-      end
+      return { name => file_value } if @type == "file"
+      return { name => text_value } if @text
 
-      if @text
-        t = typecast_value(inner_html)
-        t = advanced_typecasting(t) if t.is_a?(String) && @options[:advanced_typecasting]
-
-        if t.is_a?(String)
-          t = StringWithAttributes.new(t)
-          t.attributes = attributes
-        end
-
-        return { name => t }
-      else
-        #change repeating groups into an array
-        groups = @children.inject({}) { |s,e| (s[e.name] ||= []) << e; s }
-
-        out = nil
-        if @type == "array"
-          out = []
-          groups.each do |k, v|
-            if v.size == 1
-              out << v.first.to_hash.entries.first.last
-            else
-              out << v.map{|e| e.to_hash[k]}
-            end
-          end
-          out = out.flatten
-
-        else # If Hash
-          out = {}
-          groups.each do |k,v|
-            if v.size == 1
-              out.merge!(v.first)
-            else
-              out.merge!( k => v.map{|e| e.to_hash[k]})
-            end
-          end
-          out.merge! prefixed_attributes unless attributes.empty?
-          out = out.empty? ? @options[:empty_tag_value] : out
-        end
-
-        if @type && out.nil?
-          { name => typecast_value(out) }
-        else
-          { name => out }
-        end
-      end
+      groups = group_children
+      value = @type == "array" ? array_value(groups) : hash_value(groups)
+      value = typecast_value(value) if @type && value.nil?
+      { name => value }
     end
 
     # Typecasts a value based upon its type. For instance, if
@@ -248,6 +210,68 @@ class Nori
     alias to_s to_html
 
     private
+
+    # Decodes the base64 content of a node typed as "file" into a
+    # {StringIOFile} carrying the filename and content type attributes.
+    def file_value
+      file = StringIOFile.new((@children.first || '').unpack('m').first)
+      file.original_filename = attributes['name'] || 'untitled'
+      file.content_type = attributes['content_type'] || 'application/octet-stream'
+      file
+    end
+
+    # Typecasts the text content of the node. String results are wrapped
+    # so the node's attributes stay accessible on the value.
+    def text_value
+      value = typecast_value(inner_html)
+      value = advanced_typecasting(value) if value.is_a?(String) && @options[:advanced_typecasting]
+      value.is_a?(String) ? string_with_attributes(value) : value
+    end
+
+    # Groups the child nodes by their name so repeating siblings can be
+    # folded into arrays.
+    #
+    # @return [Hash{String => Array<XMLUtilityNode>}]
+    def group_children
+      @children.inject({}) { |hash, child| (hash[child.name] ||= []) << child; hash }
+    end
+
+    # Collects the values of all child nodes for a node typed as "array".
+    def array_value(groups)
+      values = []
+      groups.each do |child_name, nodes|
+        if nodes.size == 1
+          values << nodes.first.to_hash.entries.first.last
+        else
+          values << nodes.map { |node| node.to_hash[child_name] }
+        end
+      end
+      values.flatten
+    end
+
+    # Folds the child nodes and the prefixed attributes into a hash.
+    # An empty result becomes the :empty_tag_value option.
+    def hash_value(groups)
+      value = {}
+      groups.each do |child_name, nodes|
+        if nodes.size == 1
+          value.merge!(nodes.first.to_hash)
+        else
+          value.merge!(child_name => nodes.map { |node| node.to_hash[child_name] })
+        end
+      end
+      value.merge!(prefixed_attributes) unless attributes.empty?
+      value.empty? ? @options[:empty_tag_value] : value
+    end
+
+    # Wraps a string value so the node's attributes stay accessible
+    # through {StringWithAttributes#attributes}.
+    def string_with_attributes(value)
+      string = StringWithAttributes.new(value)
+      string.attributes = attributes
+      string
+    end
+
     def try_to_convert(value, &block)
       block.call(value)
     rescue ArgumentError

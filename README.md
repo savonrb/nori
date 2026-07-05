@@ -219,7 +219,9 @@ Members of the profile:
   with the `@`-prefixed attributes) instead of a `Nori::StringWithAttributes`.
   This is the same `@`-keyed shape element nodes already use, so the attributes
   survive `to_json`, `to_yaml`, and `Marshal`. A text node without attributes
-  stays a plain `String`.
+  stays a plain `String`. The `#text` key goes through `convert_tags_to` like
+  every other key, so a key-converting formula can reshape it (or drop the `#`
+  entirely).
 
   ```ruby
   Nori.new(:serializable => true).parse('<foo bar="baz">Content</foo>')

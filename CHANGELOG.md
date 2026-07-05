@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+* The `#text` key of the `:serializable` hash shape now goes through `:convert_tags_to` like every other key. Previously a key-converting formula (for example one that symbolizes keys) produced converted element and attribute keys next to a raw `"#text"` string key in the same hash. Nori's contract is that a `:convert_tags_to` formula sees every key it emits, which also means a caller who prefers a plain `text` key over the XML JSON convention can now map `"#text"` in their formula.
+
 ## [2.9.0] - 2026-07-05
 
 ### Changed

@@ -334,16 +334,17 @@ class Nori
     # The +:serializable+ representation of a string +value+ and the node's
     # attributes. A node with attributes maps to the XML JSON convention
     # (+{"#text" => value}+ merged with the "@"-prefixed attributes) and a
-    # node without attributes maps to the plain String. The attribute keys go
-    # through the same prefixing and tag conversion as element-node attributes
-    # ({#prefixed_attributes}), so every node kind shares one convention.
+    # node without attributes maps to the plain String. The +#text+ key and
+    # the attribute keys go through the same tag conversion as every other
+    # key ({#prefixed_attribute_name}), so a +:convert_tags_to+ formula sees
+    # each key Nori emits.
     #
     # @param value [String] the typecast text content of the node
     # @return [Hash{String => String}, String] the hash shape when the node
     #   has attributes, otherwise the plain +value+
     def serializable_value(value)
       return value if attributes.empty?
-      { "#text" => value }.merge(prefixed_attributes)
+      { prefixed_attribute_name("#text") => value }.merge(prefixed_attributes)
     end
 
     def try_to_convert(value, &block)

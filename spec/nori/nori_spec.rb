@@ -241,6 +241,21 @@ describe Nori do
           )
         end
 
+        it "passes the #text key through a :convert_tags_to formula" do
+          # the formula sees every key Nori emits: element names, @-attributes
+          # and the synthetic #text key alike
+          expect(parse('<foo bar="baz">Content</foo>', :serializable => true, :convert_tags_to => :to_sym.to_proc)).
+            to eq(:foo => { :"#text" => "Content", :"@bar" => "baz" })
+        end
+
+        it "can rename the #text key to a plain text key" do
+          # a # never occurs in element or attribute names (it is not a valid
+          # XML name character), so dropping it only affects the #text key
+          converter = lambda { |tag| tag.delete_prefix("#") }
+          expect(parse('<foo bar="baz">Content</foo>', :serializable => true, :convert_tags_to => converter)).
+            to eq("foo" => { "text" => "Content", "@bar" => "baz" })
+        end
+
         it "returns a text node without attributes as a plain String" do
           xml =<<-XML
             <opt>
@@ -259,7 +274,7 @@ describe Nori do
         it "applies :convert_tags_to to the attribute keys, matching element-node attributes" do
           xml = '<test attr="value">Text</test>'
           expect(parse(xml, :serializable => true, :convert_tags_to => :upcase.to_proc)).to eq(
-            "TEST" => { "#text" => "Text", "@ATTR" => "value" }
+            "TEST" => { "#TEXT" => "Text", "@ATTR" => "value" }
           )
         end
 

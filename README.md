@@ -2,7 +2,7 @@ Nori
 ====
 
 [![CI](https://github.com/savonrb/nori/actions/workflows/test.yml/badge.svg)](https://github.com/savonrb/nori/actions/workflows/test.yml)
-[![Gem Version](https://badge.fury.io/rb/nori.svg)](http://badge.fury.io/rb/nori)
+[![Gem Version](https://img.shields.io/gem/v/nori.svg)](https://rubygems.org/gems/nori)
 [![Coverage Status](https://coveralls.io/repos/github/savonrb/nori/badge.svg?branch=main)](https://coveralls.io/github/savonrb/nori?branch=main)
 
 Really simple XML parsing ripped from Crack, which ripped it from Merb.  

@@ -58,3 +58,9 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically        
     - name: Run tests
       run: bundle exec rake
+    - name: Upload coverage to Coveralls
+      if: matrix.ruby-version == '3.4'
+      uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
+      with:
+        file: coverage/.resultset.json
+        format: simplecov

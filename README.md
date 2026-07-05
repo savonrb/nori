@@ -3,6 +3,7 @@ Nori
 
 [![CI](https://github.com/savonrb/nori/actions/workflows/test.yml/badge.svg)](https://github.com/savonrb/nori/actions/workflows/test.yml)
 [![Gem Version](https://badge.fury.io/rb/nori.svg)](http://badge.fury.io/rb/nori)
+[![Coverage Status](https://coveralls.io/repos/github/savonrb/nori/badge.svg?branch=main)](https://coveralls.io/github/savonrb/nori?branch=main)
 
 Really simple XML parsing ripped from Crack, which ripped it from Merb.  
 
@@ -186,6 +187,19 @@ Members of the profile:
   ```ruby
   Nori.new(:standards => true).parse('<foo bar="baz"/>')
   # => {"foo"=>""}
+  ```
+
+- **no schema-less typing.** Without a schema, character data is just text, so
+  the profile implies `advanced_typecasting: false` (overridable) and ignores
+  the bare `type=` and `nil=` attribute conventions that Nori inherited from
+  Rails' `Hash.from_xml`. A `type="integer"` no longer casts, a `type="array"`
+  no longer folds children into an Array, and both stay visible as ordinary
+  attributes. Only the prefixed `xsi:nil="true"` still marks an element nil,
+  because that convention comes from XML Schema Instance itself.
+
+  ```ruby
+  Nori.new(:standards => true).parse('<id type="integer">123</id>')
+  # => {"id"=>"123"}    (with "type" accessible via #attributes)
   ```
 
 ## serializable

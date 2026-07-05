@@ -366,6 +366,30 @@ describe Nori do
           xml = '<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
           expect(parse_profiles(xml)).to eq("foo" => nil)
         end
+
+        it "keeps preserved whitespace in the hash shape under xml:space=\"preserve\"" do
+          expect(parse_profiles('<foo xml:space="preserve">   </foo>')).to eq(
+            "foo" => { "#text" => "   ", "@xml:space" => "preserve" }
+          )
+        end
+
+        it "treats a bare nil attribute as an ordinary attribute in the hash shape" do
+          expect(parse_profiles('<foo nil="true"/>')).to eq(
+            "foo" => { "#text" => "", "@nil" => "true" }
+          )
+        end
+
+        it "does not decode a bare type=\"file\" element" do
+          expect(parse_profiles('<doc type="file" name="x.pdf">aGVsbG8=</doc>')).to eq(
+            "doc" => { "#text" => "aGVsbG8=", "@type" => "file", "@name" => "x.pdf" }
+          )
+        end
+
+        it "lets an explicit :advanced_typecasting override compose with the hash shape" do
+          xml = '<status source="ldap">true</status>'
+          expect(parse(xml, :standards => true, :serializable => true, :advanced_typecasting => true)).
+            to eq("status" => { "#text" => true, "@source" => "ldap" })
+        end
       end
 
       it "should typecast an integer" do

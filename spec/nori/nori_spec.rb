@@ -248,6 +248,20 @@ describe Nori do
             to eq(:foo => { :"#text" => "Content", :"@bar" => "baz" })
         end
 
+        it "keeps attributes when advanced typecasting converts the value" do
+          expect(parse('<status source="ldap">true</status>', :serializable => true)).
+            to eq("status" => { "#text" => true, "@source" => "ldap" })
+        end
+
+        it "keeps attributes when a bare type attribute casts the value" do
+          expect(parse('<amount type="decimal" currency="EUR">42.50</amount>', :serializable => true)).
+            to eq("amount" => { "#text" => BigDecimal("42.50"), "@currency" => "EUR" })
+        end
+
+        it "returns a typecast value without attributes as the plain value" do
+          expect(parse("<value>true</value>", :serializable => true)).to eq("value" => true)
+        end
+
         it "can rename the #text key to a plain text key" do
           # a # never occurs in element or attribute names (it is not a valid
           # XML name character), so dropping it only affects the #text key
@@ -320,6 +334,37 @@ describe Nori do
           expect(result.read).to eq("hello")
           expect(result.original_filename).to eq("x.pdf")
           expect(result.content_type).to eq("application/pdf")
+        end
+      end
+
+      context "with the :standards and :serializable profiles combined" do
+        # the two profiles together: values stay text (no typecasting) and
+        # every value with attributes takes the plain-data hash shape
+
+        def parse_profiles(xml)
+          parse(xml, :standards => true, :serializable => true)
+        end
+
+        it "keeps values as strings and attributes in the hash shape" do
+          expect(parse_profiles('<foo type="integer" bar="baz">123</foo>')).to eq(
+            "foo" => { "#text" => "123", "@type" => "integer", "@bar" => "baz" }
+          )
+        end
+
+        it "does not guess types from string shape" do
+          expect(parse_profiles("<value>true</value>")).to eq("value" => "true")
+          expect(parse_profiles("<value>2003-07-16</value>")).to eq("value" => "2003-07-16")
+        end
+
+        it "returns an empty tag with attributes as the hash shape with an empty string" do
+          expect(parse_profiles('<foo bar="baz"/>')).to eq(
+            "foo" => { "#text" => "", "@bar" => "baz" }
+          )
+        end
+
+        it "still returns nil for an explicit xsi:nil" do
+          xml = '<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+          expect(parse_profiles(xml)).to eq("foo" => nil)
         end
       end
 

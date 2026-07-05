@@ -255,10 +255,16 @@ class Nori
     end
 
     # Typecasts the text content of the node. String results are wrapped
-    # so the node's attributes stay accessible on the value.
+    # so the node's attributes stay accessible on the value. Typecast
+    # non-String results can only carry the attributes under the
+    # +:serializable+ profile, where every value with attributes takes the
+    # hash shape. Without the profile they are returned bare and the
+    # attributes are dropped, because a {StringWithAttributes} cannot wrap
+    # them.
     def text_value
       value = typecast_value(inner_html)
       value = advanced_typecasting(value) if value.is_a?(String) && @options[:advanced_typecasting]
+      return serializable_value(value) if @options[:serializable]
       value.is_a?(String) ? string_with_attributes(value) : value
     end
 
@@ -331,16 +337,18 @@ class Nori
       string
     end
 
-    # The +:serializable+ representation of a string +value+ and the node's
+    # The +:serializable+ representation of a +value+ and the node's
     # attributes. A node with attributes maps to the XML JSON convention
     # (+{"#text" => value}+ merged with the "@"-prefixed attributes) and a
-    # node without attributes maps to the plain String. The +#text+ key and
-    # the attribute keys go through the same tag conversion as every other
-    # key ({#prefixed_attribute_name}), so a +:convert_tags_to+ formula sees
+    # node without attributes maps to the plain value. This holds for
+    # typecast non-String values too, so attributes are never silently
+    # dropped under the profile. The +#text+ key and the attribute keys go
+    # through the same tag conversion as every other key
+    # ({#prefixed_attribute_name}), so a +:convert_tags_to+ formula sees
     # each key Nori emits.
     #
-    # @param value [String] the typecast text content of the node
-    # @return [Hash{String => String}, String] the hash shape when the node
+    # @param value [Object] the typecast text content of the node
+    # @return [Hash{String => Object}, Object] the hash shape when the node
     #   has attributes, otherwise the plain +value+
     def serializable_value(value)
       return value if attributes.empty?

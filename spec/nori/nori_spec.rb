@@ -898,6 +898,53 @@ describe Nori do
             expect(parse('<foo xml:space="preserve">   </foo>')).to eq("foo" => { "@xml:space" => "preserve" })
           end
         end
+
+        context "no schema-less typing magic" do
+          # Without a schema, character data is just text. The bare type=/nil=
+          # attribute conventions come from Rails' Hash.from_xml (via crack),
+          # not from any XML spec, so the profile treats them as ordinary
+          # attributes and leaves typing to a schema-aware layer.
+
+          it "turns off advanced typecasting" do
+            expect(parse("<value>true</value>", :standards => true)).to eq("value" => "true")
+            expect(parse("<value>2003-07-16</value>", :standards => true)).to eq("value" => "2003-07-16")
+          end
+
+          it "lets an explicit :advanced_typecasting override the profile default" do
+            expect(parse("<value>true</value>", :standards => true, :advanced_typecasting => true)).
+              to eq("value" => true)
+          end
+
+          it "treats a bare type attribute as an ordinary attribute instead of casting" do
+            value = parse('<id type="integer">123</id>', :standards => true)["id"]
+            expect(value).to eq("123")
+            expect(value.attributes).to eq("type" => "integer")
+          end
+
+          it "does not fold a bare type=\"array\" element into an Array" do
+            xml = '<posts type="array"><post>a</post><post>b</post></posts>'
+            expect(parse(xml, :standards => true)).to eq(
+              "posts" => { "post" => ["a", "b"], "@type" => "array" }
+            )
+          end
+
+          it "does not decode a bare type=\"file\" element" do
+            value = parse('<doc type="file" name="x.pdf">aGVsbG8=</doc>', :standards => true)["doc"]
+            expect(value).to eq("aGVsbG8=")
+            expect(value.attributes).to eq("type" => "file", "name" => "x.pdf")
+          end
+
+          it "treats a bare nil attribute as an ordinary attribute" do
+            value = parse('<foo nil="true"/>', :standards => true)["foo"]
+            expect(value).to eq("")
+            expect(value.attributes).to eq("nil" => "true")
+          end
+
+          it "still honors a prefixed xsi:nil" do
+            xml = '<foo xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>'
+            expect(parse(xml, :standards => true)).to eq("foo" => nil)
+          end
+        end
       end
 
     end

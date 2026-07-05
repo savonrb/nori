@@ -92,12 +92,11 @@ class Nori
         attributes = Hash[*intermediate]
       end
 
-      # leave the type alone if we don't know what it is
-      @type = self.class.available_typecasts.include?(attributes["type"]) ? attributes.delete("type") : attributes["type"]
+      @type = bare_type(attributes)
 
       @nil_element = false
       attributes.keys.each do |key|
-        if result = /^((.*):)?nil$/.match(key)
+        if result = nil_attribute_pattern.match(key)
           @nil_element = attributes.delete(key) == "true"
           attributes.delete("xmlns:#{result[2]}") if result[1]
         end
@@ -134,7 +133,9 @@ class Nori
     # That profile returns plain data only, so a file node folds into text and
     # attributes like any other node and the base64 content is left undecoded.
     # A node with text content becomes a typecast scalar. Every other node
-    # folds its children into an array or a hash.
+    # folds its children into an array or a hash. Under the +:standards+
+    # profile no bare type attribute is honored ({#bare_type}), so file
+    # decoding, array folding and typecasting never happen there.
     #
     # @return [Hash{String => Object}] the node name mapped to its value
     def to_hash
@@ -213,6 +214,36 @@ class Nori
     alias to_s to_html
 
     private
+
+    # The value of the bare (un-namespaced) type attribute, or nil under
+    # the +:standards+ profile. A recognized type is consumed from the
+    # attributes because typecasting replaces it with the value it
+    # describes. An unrecognized type stays visible as an ordinary
+    # attribute. The bare attribute is a Rails +Hash.from_xml+ convention
+    # rather than XML, so the +:standards+ profile never reads it and the
+    # attribute passes through as ordinary data.
+    #
+    # @param attributes [Hash{String => String}] the element's attributes
+    # @return [String, nil] the type name, or nil when there is none to honor
+    def bare_type(attributes)
+      return nil if @options[:standards]
+
+      if self.class.available_typecasts.include?(attributes["type"])
+        attributes.delete("type")
+      else
+        attributes["type"]
+      end
+    end
+
+    # The attribute forms that declare an element nil. The prefixed form
+    # is the XML Schema Instance convention (xsi:nil). The bare +nil+ form
+    # is a Rails +Hash.from_xml+ convention, so the +:standards+ profile
+    # only accepts the prefixed form.
+    #
+    # @return [Regexp] the pattern, with the prefix in capture group 2
+    def nil_attribute_pattern
+      @options[:standards] ? /^((.+):)nil$/ : /^((.*):)?nil$/
+    end
 
     # Decodes the base64 content of a node typed as "file" into a
     # {StringIOFile} carrying the filename and content type attributes.

@@ -57,17 +57,22 @@ class Nori
   #
   # The profile groups the spec-correct behaviors under a single opt-in.
   # It turns on the XML string-value model for empty elements
-  # (+:consistent_empty_tags+ with an empty-string +:empty_tag_value+) and,
-  # in the parsers, xml:space honoring. These are defaults, so an explicit
-  # +:consistent_empty_tags+ or +:empty_tag_value+ passed by the caller
-  # still wins. When the profile is off the hash is empty and parsing is
-  # unchanged.
+  # (+:consistent_empty_tags+ with an empty-string +:empty_tag_value+),
+  # turns off +:advanced_typecasting+ (schema-less values are text, their
+  # types are the business of a schema-aware layer) and, in the parsers,
+  # honors xml:space. These are defaults, so an explicit option passed by
+  # the caller still wins. When the profile is off the hash is empty and
+  # parsing is unchanged.
   #
   # @param options [Hash] the options passed to {#initialize}
   # @return [Hash] the implied defaults, or +{}+ when the profile is off
   def standards_defaults(options)
     return {} unless options[:standards]
-    { :consistent_empty_tags => true, :empty_tag_value => "" }
+    {
+      :consistent_empty_tags => true,
+      :empty_tag_value       => "",
+      :advanced_typecasting  => false
+    }
   end
 
   def load_parser(parser)

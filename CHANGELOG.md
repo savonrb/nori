@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* The `:standards` profile no longer applies schema-less typing. Under `Nori.new(standards: true)`, `:advanced_typecasting` now defaults to `false` (an explicit `advanced_typecasting: true` still wins), and the bare un-namespaced `type=` and `nil=` attributes become ordinary attributes instead of casting instructions. No more `type=` conversions (`integer`, `date`, `decimal`, `array`, `file`, ...), and only a prefixed `xsi:nil="true"` marks an element nil. These conventions come from Rails' `Hash.from_xml` (inherited via crack and merb), not from any XML spec. Without a schema, character data is just text. Knowing that `<id>123</id>` holds an integer is the business of a schema-aware layer, not a guess from string shape. Parsing without the profile is completely unchanged.
+
 ### Added
 
 * Add the `:serializable` profile option. `Nori.new(serializable: true)` returns plain, directly-serializable data with no custom value classes. A text node that also has attributes becomes a Hash in the XML JSON convention (`{"#text" => content}` merged with our existing `@`-prefixed attributes instead of a `Nori::StringWithAttributes`, and a text node without attributes becomes a plain `String`. A `type="file"` node is no longer decoded into a `Nori::StringIOFile`, it folds into text and attributes like any other node, leaving the base64 content untouched for the caller to decode. That `type=` decoding is a Rails/ActiveSupport `Hash.from_xml` convention Nori inherited via crack and merb, not part of any XML spec, which is why the plain-data profile drops it. With this, values survive `to_json`, `to_yaml`, and `Marshal`. Opt-in on the 2.x line, probably the default in Nori 3.0. Reported by @ArnoldMEDLINQ ([#107](https://github.com/savonrb/nori/issues/107)), thanks to @dub357 for pinpointing the cause and finding [#106](https://github.com/savonrb/nori/pull/106), and thanks to @ekzobrain whose hash-shape approach this builds on.

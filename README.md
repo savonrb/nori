@@ -1,7 +1,7 @@
 Nori
 ====
 
-[![CI](https://github.com/savonrb/nori/actions/workflows/test.yml/badge.svg)](https://github.com/savonrb/nori/actions/workflows/test.yml)
+[![CI](https://github.com/savonrb/nori/actions/workflows/ci.yml/badge.svg)](https://github.com/savonrb/nori/actions/workflows/ci.yml)
 [![Gem Version](https://img.shields.io/gem/v/nori.svg)](https://rubygems.org/gems/nori)
 [![Coverage Status](https://coveralls.io/repos/github/savonrb/nori/badge.svg?branch=main)](https://coveralls.io/github/savonrb/nori?branch=main)
 

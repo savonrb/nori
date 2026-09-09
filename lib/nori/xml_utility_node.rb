@@ -94,6 +94,17 @@ class Nori
 
       @type = bare_type(attributes)
 
+      unless @type
+        val = attributes["xsi:type"]
+        val.gsub!(/^.*:/, '') if val
+        if self.class.available_typecasts.include?(val) 
+          attributes.delete("xsi:type")
+          @type = val
+        else
+          @type = attributes["xsi:type"]
+        end
+      end
+
       @nil_element = false
       attributes.keys.each do |key|
         if result = nil_attribute_pattern.match(key)
